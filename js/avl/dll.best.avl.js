@@ -3,6 +3,8 @@
 /*global window */
 
 /*!
+ * Copyright (C) Dylon Edwards <dylon@deltasecho.com>
+ *
  * The AVL Tree implementation below was rewritten from @pgrafov's
  * implementation in Python, available from the following address:
  * @link https://github.com/pgrafov/python-avl-tree
@@ -16,8 +18,6 @@
  * find method) and the bounded elements can be collected in constant O(N) time
  * by simply traversing the doubly-linked list until the supremum of the set
  * has been located.
- *
- * @author Dylon Edwards <dylon@deltasecho.com>
  *
  * This code is available under MIT License.
  * 
