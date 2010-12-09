@@ -3,7 +3,7 @@
 /*global window */
 
 /*!
- * Copyright (C) Dylon Edwards <dylon@deltasecho.com>
+ * Copyright (C) 2010 Dylon Edwards
  *
  * The AVL Tree implementation below was rewritten from @pgrafov's
  * implementation in Python, available from the following address:
