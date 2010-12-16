@@ -220,7 +220,8 @@ function AVLTree(comparator/*, arguments */) {
  */
 AVLTree.prototype.comparator = function(node1, node2) {
 	var key1 = node1.key, key2 = node2.key;
-	return ((key1 > key2) ? 1 : (key1 < key2) ? -1 : 0);
+	//return ((key1 > key2) ? 1 : (key1 < key2) ? -1 : 0);
+	return ((this.compare(key1, key2) > 0) ? 1 : (this.compare(key1, key2) < 0) ? -1 : 0);
 };
 
 /**
@@ -437,7 +438,8 @@ AVLTree.prototype.sanityCheck = function(node) {
 
 	balFactor = node.balance();
 
-	if (!((balFactor >= -1) && (balFactor <= 1))) {
+	//if (!((balFactor >= -1) && (balFactor <= 1))) {
+	if ((balFactor < -1) || (balFactor > 1)) {
 		throw ("Balance factor for node " + node + " is " + balFactor + "!");
 	}
 
@@ -454,7 +456,8 @@ AVLTree.prototype.sanityCheck = function(node) {
 			throw ("Left child of node " + node + " doesn't know who his father is!");
 		}
 
-		if (node.lChild.key > node.key) {
+		//if (node.lChild.key > node.key) {
+		if (this.compare(node.lChild.key, node.key) > 0) {
 			throw ("Key of left child of node " + node + " is greater than the key of his parent!");
 		}
 
@@ -466,7 +469,8 @@ AVLTree.prototype.sanityCheck = function(node) {
 			throw ("Left child of node " + node + " doesn't know who his father is!");
 		}
 
-		if (node.rChild.key < node.key) {
+		//if (node.rChild.key < node.key) {
+		if (this.compare(node.rChild.key, node.key) < 0) {
 			throw ("Key of left child of node " + node + " is less than the key of his parent!");
 		}
 
@@ -503,7 +507,8 @@ AVLTree.prototype.recomputeHeights = function(node) {
 AVLTree.prototype.addAsChild = function(parent, child) {
 	var nodeToRebalance = null, node;
 
-	if (child.key < parent.key) {
+	//if (child.key < parent.key) {
+	if (this.compare(child.key, parent.key) < 0) {
 		child.gt = parent;
 
 		if (!parent.lChild) {
@@ -532,7 +537,8 @@ AVLTree.prototype.addAsChild = function(parent, child) {
 		} else {
 			this.addAsChild(parent.lChild, child);
 		}
-	} else if (child.key > parent.key) {
+	//} else if (child.key > parent.key) {
+	} else if (this.compare(child.key, parent.key) > 0) {
 		child.lt = parent;
 
 		if (!parent.rChild) {
@@ -812,11 +818,13 @@ AVLTree.prototype.findInSubtree = function(node, key) {
 		return null;
 	}
 
-	if (key < node.key) {
+	//if (key < node.key) {
+	if (this.compare(key, node.key) < 0) {
 		return this.findInSubtree(node.lChild, key);
 	}
 
-	if (key > node.key) {
+	//if (key > node.key) {
+	if (this.compare(key, node.key) > 0) {
 		return this.findInSubtree(node.rChild, key);
 	}
 
@@ -1030,16 +1038,19 @@ AVLTree.prototype.getRange = function(lower, upper) {
 	var range = [], curr = this.root, node;
 
 	while (curr) {
-		if (curr.key < lower) {
+		//if (curr.key < lower) {
+		if (this.compare(curr.key, lower) < 0) {
 			curr = curr.rChild;
-		} else if ((curr.key > lower) && curr.lChild) {
+		//} else if ((curr.key > lower) && curr.lChild) {
+		} else if ((this.compare(curr.key, lower) > 0) && curr.lChild) {
 			curr = curr.lChild;
 		} else {
 			break;
 		}
 	}
 
-	while (curr && (curr.key <= upper)) {
+	//while (curr && (curr.key <= upper)) {
+	while (curr && (this.compare(curr.key, upper) <= 0)) {
 		range.push(curr.key);
 
 		node = curr;
