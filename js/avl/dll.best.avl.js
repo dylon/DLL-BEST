@@ -196,7 +196,10 @@ function AVLTree(comparator/*, arguments */) {
 
 	var args = Array.prototype.slice.call(arguments, 1), i, n;
 
-	if (comparator instanceof Function) {
+	// this.comparator should cause the current script to fail quickly if it
+	// isn't a function. I commented out the check to make bugs easier to
+	// detect.
+	if (comparator /*instanceof Function*/) {
 		this.comparator = comparator;
 	}
 	
