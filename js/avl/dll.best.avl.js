@@ -217,14 +217,15 @@ function AVLTree(comparator/*, arguments */) {
  * then node1 is equivalent to node2; if the value returned is 1, then node1 is
  * greater than node2.
  *
- * @param {Node} node1 The Node to compare with node2
- * @param {Node} node2 The Node to compare with node1
+ * @param {*} key1 The first key to compare
+ * @param {*} key2 The second key to compare
  * @return {number} -1, 0, or 1 depending on how node1 compares to node2
  */
-AVLTree.prototype.comparator = function(node1, node2) {
-	var key1 = node1.key, key2 = node2.key;
-	//return ((key1 > key2) ? 1 : (key1 < key2) ? -1 : 0);
-	return ((this.compare(key1, key2) > 0) ? 1 : (this.compare(key1, key2) < 0) ? -1 : 0);
+//AVLTree.prototype.comparator = function(node1, node2) {
+AVLTree.prototype.comparator = function(key1, key2) {
+	//var key1 = node1.key, key2 = node2.key;
+	return ((key1 > key2) ? 1 : (key1 < key2) ? -1 : 0);
+	//return ((this.compare(key1, key2) > 0) ? 1 : (this.compare(key1, key2) < 0) ? -1 : 0);
 };
 
 /**
@@ -232,12 +233,12 @@ AVLTree.prototype.comparator = function(node1, node2) {
  * if (node1 < node2), a value > 0 (zero) if (node1 > node2), or 0 (zero) if
  * (node1 = node2).
  *
- * @param {Node} node1 The Node to compare with node2
- * @param {Node} node2 The Node to compare with node1
+ * @param {*} key1 The first key to compare
+ * @param {*} key2 The second key to compare
  * @return The comparison of node1 with node2
  */
-AVLTree.prototype.compare = function(node1, node2) {
-	return this.comparator.call(this, node1, node2);
+AVLTree.prototype.compare = function(key1, key2) {
+	return this.comparator.call(this, key1, key2);
 };
 
 /**
@@ -342,6 +343,8 @@ AVLTree.prototype.rebalance = function(nodeToRebalance) {
 			this.recomputeHeights(A);
 			this.recomputeHeights(B);
 		}
+	} else if (nodeToRebalance.balance() != 2) {
+		return; /// Nothing needs to be balanced
 	} else {
 		if (nodeToRebalance.lChild.balance() >= 0) {
 			/*
