@@ -516,8 +516,17 @@ namespace DllBest {
 		////////////////////////////////////////////////////////////////////////
 
 
-		public abstract void AddAsChild(N root, N node);
+		/// <summary>
+		/// Adds a child Node to the specified parent </summary>
+		///
+		/// <param name-"parent"> Parent Node </param>
+		/// <param name="child"> Child Node </param>
+		public abstract void AddAsChild(N parent, N child);
 
+		/// <summary>
+		/// Removes a Node from this Tree </summary>
+		///
+		/// <param name="node"> Node to remove </param>
 		public abstract void RemoveNode(N node);
 	}
 }
