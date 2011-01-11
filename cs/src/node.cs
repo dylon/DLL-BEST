@@ -26,7 +26,8 @@ namespace DllBest {
 
 	/// <summary>
 	/// A node for use within the DLL BEST tree </summary>
-	public abstract class Node<T,N> where N : Node<T,N> {
+	public abstract class Node<T,N> : INode<T,N>
+		where N : Node<T,N> {
 
 
 		////////////////////////////////////////////////////////////////////////
@@ -38,66 +39,70 @@ namespace DllBest {
 
 		/// <summary>
 		/// Value of this Node </summary>
-		protected T m_key = default (T);
+		protected T m_value = default (T);
 
 		/// <summary>
-		/// Whether this.m_key has been read </summary>
+		/// Whether m_value has been read </summary>
 		protected bool k_read = false;
 
-		/// <summary>
-		/// Value of this Node.  This property may be set as many times as one
-		/// wants until get is called, at which point it becomes immutable (so
-		/// it can be stored in a BST, Dictionary, etc.) </summary>
-		public T Key {
-			get {
-				this.k_read = true;
-				return this.m_key;
-			}
 
-			set {
-				if (!this.k_read) {
-					this.m_key = value;
-				}
+		////////////////////////////////////////////////////////////////////////
+		///                                                                  ///
+		///                            Properties                            ///
+		///                                                                  ///
+		////////////////////////////////////////////////////////////////////////
+
+
+		public N LChild { get; set; }
+
+		public N RChild { get; set; }
+
+		public int Height { get; set; }
+
+		public int Children { get; set; }
+
+		public N Lt { get; set; }
+
+		public N Gt { get; set; }
+
+		public N Eq { get; set; }
+
+		public bool IsLeaf {
+			get {
+				return (Height == 0);
 			}
 		}
 
+		public bool IsBranch {
+			get {
+				bool lc = (LChild != null);
+				bool rc = (RChild != null);
 
-		////////////////////////////////////////////////////////////////////////
-		///                                                                  ///
-		///                          Default Fields                          ///
-		///                                                                  ///
-		////////////////////////////////////////////////////////////////////////
+				return ((lc && !rc) || (!lc && rc));
+			}
+		}
 
+		public int MaxChildHeight {
+			get {
+				int lHeight = (LChild != null) ? LChild.Height : -1,
+					rHeight = (RChild != null) ? RChild.Height : -1;
+				
+				return (lHeight > rHeight) ? lHeight : rHeight;
+			}
+		}
 
-		/// <summary>
-		/// Pointer to this Node's BST parent </summary>
-		public N Parent { get; set; }
+		public T Value {
+			get {
+				k_read = true;
+				return m_value;
+			}
 
-		/// <summary>
-		/// Pointer to this Node's left BST child </summary>
-		public N LChild { get; set; }
-
-		/// <summary>
-		/// Pointer to this Node's right BST child </summary>
-		public N RChild { get; set; }
-
-		/// <summary>
-		/// Number of levels within the subtree formed with this Node as the
-		/// root. </summary>
-		public int Height { get; set; }
-
-		/// <summary>
-		/// Pointer to the DLL node immediately less than this one </summary>
-		public N Lt { get; set; }
-
-		/// <summary>
-		/// Pointer to the DLL node immediately greater than this one
-		/// </summary>
-		public N Gt { get; set; }
-
-		/// <summary>
-		/// Pointer to the next LL node equal to this one </summary>
-		public N Eq { get; set; }
+			set {
+				if (!k_read) {
+					m_value = value;
+				}
+			}
+		}
 
 
 		////////////////////////////////////////////////////////////////////////
@@ -110,15 +115,15 @@ namespace DllBest {
 		/// <summary>
 		/// Constructs a new DLL BEST Node </summary>
 		///
-		/// <param name="Key">Value to assign this Node</param>
-		public Node(T Key) {
-			this.Key = Key;
+		/// <param name="value">Value to assign this Node</param>
+		public Node(T value) {
+			Value = value;
 		}
 
 		/// <summary>
 		/// Parameter-less constructor </summary>
 		public Node()
-			: this(default(T)) {
+			: this(default (T)) {
 		}
 
 
@@ -129,33 +134,19 @@ namespace DllBest {
 		////////////////////////////////////////////////////////////////////////
 
 
-		/// <summary>
-		/// Assigns the values of the given Node to this one </summary>
-		///
-		/// <param name="node"> Node whose values to assign this one </param>
-		/// <param name="key"> Whether to assign the value of the given Node to
-		/// this one </param>
-		public void Assign(N node, bool key) {
-			this.Parent = (N) node.Parent;
-			this.LChild = (N) node.LChild;
-			this.RChild = (N) node.RChild;
-			this.Height = node.Height;
+		public void Assign(N node, bool value) {
+			this.LChild   = node.LChild;
+			this.RChild   = node.RChild;
+			this.Height   = node.Height;
+			this.Children = node.Children;
 
-			if (this.LChild != null) {
-				this.LChild.Parent = (N) this;
+			if (value) {
+				this.Value = node.Value;
+				this.Eq    = node.Eq;
 			}
 
-			if (this.RChild != null) {
-				this.RChild.Parent = (N) this;
-			}
-
-			if (key) {
-				this.Key = node.Key;
-				this.Eq  = (N) node.Eq;
-			}
-
-			this.Lt = (N) node.Lt;
-			this.Gt = (N) node.Gt;
+			this.Lt = node.Lt;
+			this.Gt = node.Gt;
 
 			if (this.Lt != null) {
 				this.Lt.Gt = (N) this;
@@ -166,13 +157,8 @@ namespace DllBest {
 			}
 		}
 
-		/// <summary>
-		/// Assigns the values of the given Node to this one </summary>
-		///
-		/// <param name="node"> Node whose values to assign this one </param>
-		/// this one </param>
 		public void Assign(N node) {
-			this.Assign(node, false);
+			Assign(node, false);
 		}
 
 
@@ -189,11 +175,11 @@ namespace DllBest {
 		///
 		/// <returns> A string representation of this Node </returns>
 		public override string ToString() {
-			if (this.Key is object) {
-				return "(" + this.Key.ToString() + ")";
+			if (Value is object) {
+				return "(" + Value.ToString() + ")";
 			}
 
-			return "(" + this.Key + ")";
+			return "(" + Value + ")";
 		}
 	}
 }

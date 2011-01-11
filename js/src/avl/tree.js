@@ -98,6 +98,10 @@ Tree.inherits(DllBest.Tree);
  * @param {Node} candidate The Node to rebalance
  */
 Tree.prototype.rebalance = function(candidate) {
+	/*
+	 * TODO: Refactor this like I did the C-Sharp stuff
+	 */
+
 	var A = candidate, B, C,
 		balance = A.balance(),
 		F = A.parent;

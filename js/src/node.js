@@ -47,6 +47,8 @@ function Node(key) {
 	this.key = key;
 }
 
+Node.inherits(DllBest.Base);
+
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
 ///                              Default Fields                              ///

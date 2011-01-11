@@ -22,117 +22,100 @@
 
 using System;
 
-namespace DllBest {
-	namespace Avl {
+namespace DllBest.Avl {
+
+	/// <summary>
+	/// A node for use within the DLL BEST tree </summary>
+	public class Node<T> : DllBest.Node<T, Node<T>>, INode<T, Node<T>> {
+
+
+		////////////////////////////////////////////////////////////////////////
+		///                                                                  ///
+		///                          Default Fields                          ///
+		///                                                                  ///
+		////////////////////////////////////////////////////////////////////////
+
+
+		////////////////////////////////////////////////////////////////////////
+		///                                                                  ///
+		///                            Properties                            ///
+		///                                                                  ///
+		////////////////////////////////////////////////////////////////////////
+	
+
+		public Node<T> Parent { get; set; }
+
+		public int Balance {
+			get {
+				int lHeight = (LChild != null) ? LChild.Height : -1,
+					rHeight = (RChild != null) ? RChild.Height : -1;
+
+				return (lHeight - rHeight);
+			}
+		}
+
+		public bool IsBalanced {
+			get {
+				int balance = Balance;
+				return ((balance >= -1) && (balance <= 1));
+			}
+		}
+
+
+		////////////////////////////////////////////////////////////////////////
+		///                                                                  ///
+		///                   DllBest.Avl.Node Constructor                   ///
+		///                                                                  ///
+		////////////////////////////////////////////////////////////////////////	
+
 
 		/// <summary>
-		/// A node for use within the DLL BEST tree </summary>
-		public class Node<T> : DllBest.Node<T, Node<T>> {
+		/// Constructs a new DLL BEST Node </summary>
+		///
+		/// <param name="value">Value to assign this Node</param>
+		public Node(T value)
+			: base(value) {
+		}
+
+		/// <summary>
+		/// Parameter-less constructor </summary>
+		public Node()
+			: this(default (T)) {
+		}
 
 
-			////////////////////////////////////////////////////////////////////////
-			///                                                                  ///
-			///                            Properties                            ///
-			///                                                                  ///
-			////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		///                                                                  ///
+		///                         Instance Methods                         ///
+		///                                                                  ///
+		////////////////////////////////////////////////////////////////////////
 
 
-			/// <summary>
-			/// Whether this Node is a leaf node (i.e. it has no children)
-			/// </summary>
-			public bool IsLeaf {
-				get {
-					return (this.Height == 0);
-				}
+		new public void Assign(Node<T> node, bool value) {
+			base.Assign(node, value);
+
+			this.Parent = node.Parent;
+
+			if (this.LChild != null) {
+				this.LChild.Parent = this;
 			}
 
-			/// <summary>
-			/// Whether this Node is a branch (i.e. it has exactly one child)
-			/// </summary>
-			public bool IsBranch {
-				get {
-					bool lc = (this.LChild != null);
-					bool rc = (this.RChild != null);
-
-					return ((lc && !rc) || (!lc && rc));
-				}
+			if (this.RChild != null) {
+				this.RChild.Parent = this;
 			}
+		}
 
-			/// <summary>
-			/// The maximum height between this Node's children, or -1 if this is a
-			/// leaf node. </summary>
-			public int MaxChildHeight {
-				get {
-					int lHeight = (this.LChild != null) ? this.LChild.Height : -1,
-						rHeight = (this.RChild != null) ? this.RChild.Height : -1;
-					
-					return (lHeight > rHeight) ? lHeight : rHeight;
-				}
+		/// <summary>
+		/// Returns a string representation of this Node, suitable for printing
+		/// </summary>
+		///
+		/// <returns> A string representation of this Node </returns>
+		public override string ToString() {
+			if (Value is object) {
+				return "(" + Value.ToString() + ", " + Height + ")";
 			}
-
-			/// <summary>
-			/// The balance of this Node, which is calculated as the difference
-			/// between the heights of its left and right children. </summary>
-			public int Balance {
-				get {
-					int lHeight = (this.LChild != null) ? this.LChild.Height : -1,
-						rHeight = (this.RChild != null) ? this.RChild.Height : -1;
-
-					return (lHeight - rHeight);
-				}
-			}
-
-			/// <summary>
-			/// Whether this Node is balanced </summary>
-			public bool IsBalanced {
-				get {
-					int balance = this.Balance;
-					return ((balance >= -1) && (balance <= 1));
-				}
-			}
-
-
-			////////////////////////////////////////////////////////////////////////
-			///                                                                  ///
-			///                   DllBest.Avl.Node Constructor                   ///
-			///                                                                  ///
-			////////////////////////////////////////////////////////////////////////	
-
-
-			/// <summary>
-			/// Constructs a new DLL BEST Node </summary>
-			///
-			/// <param name="key">Value to assign this Node</param>
-			public Node(T key)
-				: base(key) {
-			}
-
-			/// <summary>
-			/// Parameter-less constructor </summary>
-			public Node()
-				: this(default(T)) {
-			}
-
-
-			////////////////////////////////////////////////////////////////////////
-			///                                                                  ///
-			///                         Instance Methods                         ///
-			///                                                                  ///
-			////////////////////////////////////////////////////////////////////////
-
-
-			/// <summary>
-			/// Returns a string representation of this Node, suitable for printing
-			/// </summary>
-			///
-			/// <returns> A string representation of this Node </returns>
-			public override string ToString() {
-				if (this.Key is object) {
-					return "(" + this.Key.ToString() + ", " + this.Height + ")";
-				}
-				
-				return "(" + this.Key + ", " + this.Height + ")";
-			}
+			
+			return "(" + Value + ", " + Height + ")";
 		}
 	}
 }

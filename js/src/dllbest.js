@@ -42,7 +42,43 @@ Function.prototype.inherits = function(Super) {
 	this.prototype.constructor = this;
 };
 
-window.DllBest = {};
+/**
+ * Base constructor of all DllBest-related types
+ */
+function Base() {
+	/// Empty Constructor ///
+}
+
+Base.inherits(Function);
+
+/**
+ * Extends this constructor with an arbitrary number of prototypical objects.
+ * This is not intended to mimic multiple inheritance, but to make
+ * modularization of type definitions easy.
+ */
+Base.prototype.extend = function(/* arguments */) {
+	var p, a, o, k, i, j;
+	
+	p = this.__proto__;
+	a = arguments;
+	j = a.length;
+
+	for (i = 0; i < j; ++ i) {
+		if (!(o = a[i])) {
+			continue;
+		}
+
+		for (k in o) {
+			if (o.hasOwnProperty(k)) {
+				p[k] = o[k];
+			}
+		}
+	}
+};
+
+window.DllBest = {
+	Base: Base
+};
 
 }(window));
 

@@ -21,16 +21,21 @@
 /// THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using CG = System.Collections.Generic;
 
 namespace DllBest {
 
+	[Flags]
+	public enum Redundancy {
+		Redundant = 0x01 << 0,
+		Unique    = 0x01 << 1,
+	}
+
 	/// <summary>
-	/// Provides a base Tree class for all Doubly-Linked List, Binary Extended
+	/// Provides a base Tree class for all Doubly-Linked CG.List, Binary Extended
 	/// Search Tree classes. </summary>
-	///
-	///
-	public abstract class Tree<T,N> where N : Node<T,N>, new() {
+	public abstract partial class Tree<T,N> : IRedundant<T,N>, IUnique<T,N>
+		where N : Node<T,N>, new() {
 
 
 		////////////////////////////////////////////////////////////////////////
@@ -41,64 +46,20 @@ namespace DllBest {
 
 
 		/// <summary>
-		/// Compares two elements x and y.  The return value should be less
-		/// than zero of x is less than y, equal to zero if x is equal to y,
-		/// or greater than zero if x is greater than y </summary>
-		///
-		/// <param name="x">
-		/// The first element of type T to compare </param>
-		///
-		/// <param name="y">
-		/// The second element of type T to comapre </param>
-		public delegate int Comparator(T x, T y);
-
-		/// <summary>
-		/// Compares two T elements </summary>
+		/// Compares two elements of type T </summary>
 		public Comparator Compare;
 
+		protected Indexer m_get;
 
-		////////////////////////////////////////////////////////////////////////
-		///                                                                  ///
-		///                            Properties                            ///
-		///                                                                  ///
-		////////////////////////////////////////////////////////////////////////
+		protected Order m_preorder;
 
+		protected Order m_inorder;
 
-		/// <summary>
-		/// Height of this Binary Search Tree </summary>
-		public int Height {
-			get {
-				if (this.Root != null) {
-					return this.Root.Height;
-				}
+		protected Order m_postorder;
 
-				return 0;
-			}
-		}
+		protected Ranger m_range;
 
-		/// <summary>
-		/// Biggest value in this Tree </summary>
-		public N Biggest {
-			get {
-				if (this.Root != null) {
-					return this.FindBiggest(this.Root);
-				}
-
-				return null;
-			}
-		}
-
-		/// <summary>
-		/// Smallest value in this Tree </summary>
-		public N Smallest {
-			get {
-				if (this.Root != null) {
-					return this.FindSmallest(this.Root);
-				}
-
-				return null;
-			}
-		}
+		protected Inserter m_insert;
 
 
 		////////////////////////////////////////////////////////////////////////
@@ -108,13 +69,14 @@ namespace DllBest {
 		////////////////////////////////////////////////////////////////////////
 
 
-		/// <summary>
-		/// Root Node of this Tree </summary>
-		public N Root { get; set; }
-
-		/// <summary>
-		/// Number of elements in this Tree </summary>
-		public int Elements = 0;
+		////////////////////////////////////////////////////////////////////////
+		///                                                                  ///
+		///                              Flags                               ///
+		///                                                                  ///
+		////////////////////////////////////////////////////////////////////////
+		
+		
+		public Redundancy Redundancy;
 
 
 		////////////////////////////////////////////////////////////////////////
@@ -129,8 +91,103 @@ namespace DllBest {
 		///
 		/// <param name="Compare">
 		/// Delegate for comparing two T elements </param>
-		public Tree(Comparator Compare) {
+		public Tree(Comparator Compare, Redundancy Redundancy) {
 			this.Compare = Compare;
+			this.Redundancy = Redundancy;
+
+			switch (Redundancy) {
+				case Redundancy.Redundant: {
+					Init<IRedundant<T,N>>();
+					break;
+				}
+				case Redundancy.Unique: {
+					Init<IUnique<T,N>>();
+					break;
+				}
+			}
+		}
+
+		public Tree(Comparator Compare)
+			: this(Compare, Redundancy.Redundant) {
+		}
+
+
+		////////////////////////////////////////////////////////////////////////
+		///                                                                  ///
+		///                           Init Method                            ///
+		///                                                                  ///
+		////////////////////////////////////////////////////////////////////////
+
+
+		protected void Init<I>() where I : ITree<T,N,I> {
+			m_get       = ((ITree<T,N,I>) this).Get;
+			m_preorder  = ((ITree<T,N,I>) this).PreOrder;
+			m_inorder   = ((ITree<T,N,I>) this).InOrder;
+			m_postorder = ((ITree<T,N,I>) this).PostOrder;
+			m_range     = ((ITree<T,N,I>) this).Range;
+			m_insert    = ((ITree<T,N,I>) this).Insert;
+		}
+
+
+		////////////////////////////////////////////////////////////////////////
+		///                                                                  ///
+		///                            Properties                            ///
+		///                                                                  ///
+		////////////////////////////////////////////////////////////////////////
+
+
+		public N Root { 
+			get; 
+			set; 
+		}
+
+		public N Head { 
+			get; 
+			set; 
+		}
+
+		public N Tail { 
+			get; 
+			set; 
+		}
+
+		public int Elements {
+			get;
+			set;
+		}
+
+		public int Height {
+			get {
+				if (Root != null) {
+					return Root.Height;
+				}
+
+				return 0;
+			}
+		}
+
+		public N Biggest {
+			get {
+				if (Root != null) {
+					return FindBiggest(Root);
+				}
+
+				return null;
+
+				//return Head;
+			}
+		}
+
+		public N Smallest {
+			get {
+				if (Root != null) {
+					return FindSmallest(Root);
+				}
+
+				return null;
+
+				//return Tail;
+			}
 		}
 
 
@@ -141,328 +198,115 @@ namespace DllBest {
 		////////////////////////////////////////////////////////////////////////
 
 
-		/// <summary>
-		/// Creates and inserts a new Node using the provided key as its value
-		/// </summary>
-		///
-		/// <param name="key">
-		/// Value to provide the new Node </param>
-		///
-		/// <returns>
-		/// Whether the insert was successful </returns>
-		public bool TryInsert(T key) {
-			N node;
-
-			if (this.Root == null) {
-				node = new N();
-				node.Key = key;
-				this.Root = node;
-
-				return true;
-			}
-
-			if (this.Find(key) == null) {
-				node = new N();
-				node.Key = key;
-
-				this.AddAsChild(this.Root, node);
-				this.Elements += 1;
-
-				return true;
-			}
-
-			return false;
+		public T Get(int index, N node) {
+			return m_get(index, node);
 		}
 
-		/// <summary>
-		/// Creates and appends a new Node using the provided key as its value.
-		/// The difference between this.Append and this.TryInsert is that
-		/// this.TryInsert only adds a new node if there is not one with an
-		/// equivalent value already in this Tree. </summary>
-		///
-		/// <param name="key">
-		/// Value of the Node to insert </param>
-		public void Append(T key) {
-			N node = new N();
-			node.Key = key;
-
-			if (this.Root != null) {
-				this.AddAsChild(this.Root, node);
-				this.Elements += 1;
-			}
-			else {
-				this.Root = node;
-			}
+		public T Get(int index) {
+			return Get(index, Root);
 		}
 
-		/// <summary>
-		/// Locates and returns the biggest Node from the given one </summary>
-		///
-		/// <param name="node">
-		/// Root Node of the sub-tree to traverse </param>
-		///
-		/// <returns>
-		/// The biggest Node branching from node </returns>
 		public N FindBiggest(N node) {
-			while (node.RChild != null) {
-				node = (N) node.RChild;
+			N child = node;
+			while ((child = child.RChild) != null) {
+				node = child;
 			}
 
 			return node;
 		}
 
-		/// <summary>
-		/// Locates and returns the smalles Node from the given one </summary>
-		///
-		/// <param name="node">
-		/// Root Node of the sub-tree to traverse </param>
-		///
-		/// <returns>
-		/// The smallest Node branching from node </returns>
 		public N FindSmallest(N node) {
-			while (node.LChild != null) {
-				node = (N) node.LChild;
+			N child = node;
+			while ((child = child.LChild) != null) {
+				node = child;
 			}
 
 			return node;
 		}
 
-		/// <summary>
-		/// Recursively traverses this Tree in pre-order </summary>
-		///
-		/// <param name="node">
-		/// Node at which to begin the traversal </param>
-		///
-		/// <param name="list">
-		/// The list containing all of the values </param>
-		///
-		/// <returns>
-		/// The values of this Tree in pre-order </returns>
-		public List<T> PreOrder(N node, ref List<T> list) {
-			list.Add(node.Key);
+		public abstract void Add(N parent, N child);
 
-			N next = node;
-			while ((next = (N) next.Eq) != null) {
-				list.Add(next.Key);
-			}
+		public abstract void Remove(N node);
 
-			if (node.LChild != null) {
-				this.PreOrder((N) node.LChild, ref list);
-			}
+		public void Insert(T value) {
+			m_insert(value);
+		}
 
-			if (node.RChild != null) {
-				this.PreOrder((N) node.RChild, ref list);
+		public void PreOrder(N node, CG.List<T> list) {
+			m_preorder(node, list);
+		}
+
+		public CG.List<T> PreOrder() {
+			CG.List<T> list = new CG.List<T>(Elements);
+
+			if (Root != null) {
+				PreOrder(Root, list);
 			}
 
 			return list;
 		}
 
-		/// <summary>
-		/// Recursively traverses this Tree in pre-order </summary>
-		///
-		/// <returns>
-		/// The values of this Tree in pre-order </returns>
-		public List<T> PreOrder() {
-			List<T> list = new List<T>(this.Elements);
+		public void InOrder(N node, CG.List<T> list) {
+			m_inorder(node, list);
+		}
 
-			if (this.Root != null) {
-				return this.PreOrder(this.Root, ref list);
+		public CG.List<T> InOrder() {
+			CG.List<T> list = new CG.List<T>(Elements);
+
+			if (Root != null) {
+				InOrder(Root, list);
 			}
 
 			return list;
 		}
 
-		/// <summary>
-		/// Recursively traverses this Tree in order </summary>
-		///
-		/// <param name="node">
-		/// Node at which to begin the traversal </param>
-		///
-		/// <param name="list">
-		/// The list containing all of the values </param>
-		///
-		/// <returns>
-		/// The values of this Tree in order </returns>
-		public List<T> InOrder(N node, ref List<T> list) {
-			if (node.LChild != null) {
-				this.InOrder((N) node.LChild, ref list);
-			}
+		public void PostOrder(N node, CG.List<T> list) {
+			m_postorder(node, list);
+		}
 
-			list.Add(node.Key);
+		public CG.List<T> PostOrder() {
+			CG.List<T> list = new CG.List<T>(Elements);
 
-			N next = node;
-			while ((next = (N) next.Eq) != null) {
-				list.Add(next.Key);
-			}
-
-			if (node.RChild != null) {
-				this.InOrder((N) node.RChild, ref list);
+			if (Root != null) {
+				PostOrder(Root, list);
 			}
 
 			return list;
 		}
 
-		/// <summary>
-		/// Recursively traverses this Tree in order </summary>
-		///
-		/// <returns>
-		/// The values of this Tree in order </returns>
-		public List<T> InOrder() {
-			List<T> list = new List<T>(this.Elements);
-
-			if (this.Root != null) {
-				return this.InOrder(this.Root, ref list);
-			}
-
-			return list;
-		}
-
-		/// <summary>
-		/// Recursively traverses this Tree in post-order </summary>
-		///
-		/// <param name="node">
-		/// Node at which to begin the traversal </param>
-		///
-		/// <param name="list">
-		/// The list containing all of the values </param>
-		///
-		/// <returns>
-		/// The values of this Tree in post-order </returns>
-		public List<T> PostOrder(N node, ref List<T> list) {
-			if (node.LChild != null) {
-				this.PostOrder((N) node.LChild, ref list);
-			}
-
-			if (node.RChild != null) {
-				this.PostOrder((N) node.RChild, ref list);
-			}
-
-			list.Add(node.Key);
-
-			N next = node;
-			while ((next = (N) next.Eq) != null) {
-				list.Add(next.Key);
-			}
-
-			return list;
-		}
-
-		/// <summary>
-		/// Recursively traverses this Tree in post-order </summary>
-		///
-		/// <returns>
-		/// The values of this Tree in post-order </returns>
-		public List<T> PostOrder() {
-			List<T> list = new List<T>(this.Elements);
-
-			if (this.Root != null) {
-				return this.PostOrder(this.Root, ref list);
-			}
-
-			return list;
-		}
-
-		/// <summary>
-		/// Recursively locates the Node in this Tree with the requested key
-		/// </summary>
-		///
-		/// <param name="node">
-		/// Node at which to begin the traversal </param>
-		///
-		/// <param name="key">
-		/// Value of the sought after Node </param>
-		///
-		/// <returns>
-		/// Either a matching Node or null if none can be found </returns>
-		public N FindInSubTree(N node, T key) {
+		public N Find(T value, N node) {
 			if (node == null) {
 				return null;
 			}
 
-			int ineq = this.Compare(key, node.Key);
+			int comp = Compare(value, node.Value);
 
-			if (ineq < 0) {
-				return this.FindInSubTree((N) node.LChild, key);
+			if (comp < 0) {
+				return Find(value, node.LChild);
 			}
 
-			if (ineq > 0) {
-				return this.FindInSubTree((N) node.RChild, key);
+			if (comp > 0) {
+				return Find(value, node.RChild);
 			}
 
 			return node;
 		}
 
-		/// <summary>
-		/// Locates the Node in this Tree with the requested key </summary>
-		///
-		/// <returns>
-		/// Either a matching Node or null if none can be found </returns>
-		public N Find(T key) {
-			return this.FindInSubTree(this.Root, key);
+		public N Find(T value) {
+			return Find(value, Root);
 		}
 
-		/// <summary>
-		/// Removes the Node corresponding to the given key </summary>
-		///
-		/// <param name="key">
-		/// Value of the Node to remove </param>
-		///
-		/// <returns>
-		/// Whether the operation was successful </returns>
-		public bool Remove(T key) {
-			N node = this.Find(key);
+		public void Remove(T value) {
+			N node = Find(value);
 
 			if (node != null) {
-				this.RemoveNode(node);
-				return true;
+				Remove(node);
+				Elements -= 1;
 			}
-
-			return false;
 		}
 
-		/// <summary>
-		/// Returns the range of nodes from this Tree whose values are bounded
-		/// by lower and upper </summary>
-		///
-		/// <param name="lower">
-		/// Lower bound of the elements to return </param>
-		///
-		/// <param name="upper">
-		/// Upper bound of the elements to return </param>
-		///
-		/// <returns>
-		/// A list of the bounded elements in this Tree </returns>
-		public List<T> GetRange(T lower, T upper) {
-			List<T> range = new List<T>();
-			
-			N curr = this.Root;
-
-			while (curr != null) {
-				int comp = this.Compare(curr.Key, lower);
-
-				if (comp < 0) {
-					curr = (N) curr.RChild;
-				}
-				else if ((comp > 0) && (curr.LChild != null)) {
-					curr = (N) curr.LChild;
-				}
-				else {
-					break;
-				}
-			}
-
-			while ((curr != null) && (this.Compare(curr.Key, upper) <= 0)) {
-				range.Add(curr.Key);
-
-				N node = curr;
-				while ((node = (N) node.Eq) != null) {
-					range.Add(node.Key);
-				}
-
-				curr = (N) curr.Gt;
-			}
-
-			return range;
+		public CG.List<T> Range(T lower, T upper) {
+			return m_range(lower, upper);
 		}
 
 		/// <summary>
@@ -473,19 +317,19 @@ namespace DllBest {
 		///
 		/// <returns>
 		/// An inorder list of all the elements in this Tree </returns>
-		public List<T> DllDump() {
-			List<T> dump = new List<T>(this.Elements);
+		public CG.List<T> DllDump() {
+			CG.List<T> dump = new CG.List<T>(Elements);
 
-			N curr = this.Smallest;
+			N curr = Smallest;
 			while (curr != null) {
-				dump.Add(curr.Key);
+				dump.Add(curr.Value);
 
 				N node = curr;
-				while ((node = (N) node.Eq) != null) {
-					dump.Add(node.Key);
+				while ((node = node.Eq) != null) {
+					dump.Add(node.Value);
 				}
 
-				curr = (N) curr.Gt;
+				curr = curr.Gt;
 			}
 
 			return dump;
@@ -498,36 +342,15 @@ namespace DllBest {
 		/// <returns>
 		/// The value of the greatest Node in this Tree </returns>
 		public T Dequeue() {
-			N node = this.Biggest;
+			N node = Biggest;
 
 			if (node != null) {
-				this.RemoveNode(node);
-				return node.Key;
+				Remove(node);
+				return node.Value;
 			}
 
-			return default(T);
+			return default (T);
 		}
-
-		
-		////////////////////////////////////////////////////////////////////////
-		///                                                                  ///
-		///                         Abstract Methods                         ///
-		///                                                                  ///
-		////////////////////////////////////////////////////////////////////////
-
-
-		/// <summary>
-		/// Adds a child Node to the specified parent </summary>
-		///
-		/// <param name-"parent"> Parent Node </param>
-		/// <param name="child"> Child Node </param>
-		public abstract void AddAsChild(N parent, N child);
-
-		/// <summary>
-		/// Removes a Node from this Tree </summary>
-		///
-		/// <param name="node"> Node to remove </param>
-		public abstract void RemoveNode(N node);
 	}
 }
 

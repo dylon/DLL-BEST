@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
+VERSION = '0.0.1'
+APPNAME = 'dllbest'
+
+top = '.'
+out = 'build'
+
+def options(opt):
+	opt.load('cs')
+	opt.add_option(
+		'--csc-debug-mode',
+		type    = 'string',
+		dest    = 'csdebug',
+		action  = 'store',
+		default = 'full', 
+		help    = 'One of (full|pdbonly|release)')
+
+def configure(cfg):
+	cfg.load('cs')
+	cfg.env.CSDEBUG = cfg.options.csdebug
+
+def build(bld):
+	bld(features = 'cs',
+	    source   = bld.path.find_dir('src').ant_glob('**/*.cs'),
+		type     = 'library',
+		gen      = 'dllbest.dll',
+		name     = 'dllbest')
+

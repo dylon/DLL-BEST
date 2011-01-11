@@ -73,6 +73,8 @@ function Tree(N, compare) {
 	this.compare = compare;
 }
 
+Tree.inherits(DllBest.Base);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
