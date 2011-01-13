@@ -296,8 +296,8 @@ Tree.prototype.sanityCheck = function(node) {
 			throw ("Left child of node " + node + " doesn't know who his father is!");
 		}
 
-		if (this.compare(node.lChild.key, node.key) > 0) {
-			throw ("Key of left child of node " + node + " is greater than the key of his parent!");
+		if (this.compare(node.lChild.value, node.value) > 0) {
+			throw ("Key of left child of node " + node + " is greater than the value of his parent!");
 		}
 
 		this.sanityCheck(node.lChild);
@@ -308,8 +308,8 @@ Tree.prototype.sanityCheck = function(node) {
 			throw ("Left child of node " + node + " doesn't know who his father is!");
 		}
 
-		if (this.compare(node.rChild.key, node.key) < 0) {
-			throw ("Key of left child of node " + node + " is less than the key of his parent!");
+		if (this.compare(node.rChild.value, node.value) < 0) {
+			throw ("Key of left child of node " + node + " is less than the value of his parent!");
 		}
 
 		this.sanityCheck(node.rChild);
@@ -344,7 +344,7 @@ Tree.prototype.recomputeHeights = function(node) {
 Tree.prototype.addAsChild = function(parent, child) {
 	var candidate = null, ineq;
 
-	ineq = this.compare(child.key, parent.key);
+	ineq = this.compare(child.value, parent.value);
 
 	if (ineq < 0) {
 		candidate = this.addLeftChild(parent, child);

@@ -88,8 +88,8 @@ Tree.inherits(DllBest.Base);
  * if (node1 < node2), a value > 0 (zero) if (node1 > node2), or 0 (zero) if
  * (node1 = node2).
  *
- * @param {*} key1 The first key to compare
- * @param {*} key2 The second key to compare
+ * @param {*} key1 The first value to compare
+ * @param {*} key2 The second value to compare
  * @return The comparison of node1 with node2
  */
 Tree.prototype.compare = null;
@@ -126,7 +126,7 @@ Tree.prototype.biggest = function() {
 		return this.findBiggest(this.root);
 	}
 
-	return this.null;
+	return null;
 };
 
 /**
@@ -175,18 +175,18 @@ Tree.prototype.elements = 0;
 
 
 /**
- * Creates and inserts a new Node using the provided key as its value.
+ * Creates and inserts a new Node using the provided value as its value.
  *
- * @param {*} key The key to assign the new Node
+ * @param {*} value The value to assign the new Node
  */
-Tree.prototype.tryInsert = function(key) {
+Tree.prototype.tryInsert = function(value) {
 	if (!this.root) {
-		this.root = new this.N(key);;
+		this.root = new this.N(value);
 		return true;
 	}
 
-	if (!this.find(key)) {
-		this.addAsChild(this.root, new this.N(key));
+	if (!this.find(value)) {
+		this.addAsChild(this.root, new this.N(value));
 		this.elements += 1;
 		return true;
 	}
@@ -195,15 +195,15 @@ Tree.prototype.tryInsert = function(key) {
 };
 
 /**
- * Creates and appends a new Node using the provided key as its value. The
+ * Creates and appends a new Node using the provided value as its value. The
  * difference between this.append and this.tryInsert is that this.tryInsert
  * only adds a new node if there is not one with an equivalent value already
  * in this Tree.
  *
- * @param {*} key The key to assign the new Node
+ * @param {*} value The value to assign the new Node
  */
-Tree.prototype.append = function(key) {
-	var node = new this.N(key);
+Tree.prototype.append = function(value) {
+	var node = new this.N(value);
 
 	if (this.root) {
 		this.addAsChild(this.root, node);
@@ -256,11 +256,11 @@ Tree.prototype.preorder = function rec(node, list) {
 		return list;
 	}
 
-	list.push(node.key);
+	list.push(node.value);
 
 	var next = node;
 	while ((next = next.eq)) {
-		list.push(next.key);
+		list.push(next.value);
 	}
 
 	if (node.lChild) {
@@ -293,11 +293,11 @@ Tree.prototype.inorder = function rec(node, list) {
 		rec(node.lChild, list);
 	}
 
-	list.push(node.key);
+	list.push(node.value);
 
 	var next = node;
 	while ((next = next.eq)) {
-		list.push(next.key);
+		list.push(next.value);
 	}
 
 	if (node.rChild) {
@@ -330,59 +330,59 @@ Tree.prototype.postorder = function rec(node, list) {
 		rec(node.rChild, list);
 	}
 
-	list.push(node.key);
+	list.push(node.value);
 
 	var next = node;
 	while ((next = next.eq)) {
-		list.push(next.key);
+		list.push(next.value);
 	}
 
 	return list;
 };
 
 /**
- * Locates the Node in this Tree which corresponds to the specified key.
+ * Locates the Node in this Tree which corresponds to the specified value.
  *
- * @param {*} key The key with which to retrieve the corresponding Node.
- * @return {Node} The Node with the given key
+ * @param {*} value The value with which to retrieve the corresponding Node.
+ * @return {Node} The Node with the given value
  */
-Tree.prototype.find = function(key) {
-	return this.findInSubtree(this.root, key);
+Tree.prototype.find = function(value) {
+	return this.findInSubtree(this.root, value);
 };
 
 /**
- * Recursively locates the Node in this Tree with the requested key.
+ * Recursively locates the Node in this Tree with the requested value.
  *
  * @param {Node} node The Node at which to begin the search
- * @param {*} key The desired value of the sought after Node
+ * @param {*} value The desired value of the sought after Node
  * @return {Node|null} Either the first matching Node or null
  */
-Tree.prototype.findInSubtree = function rec(node, key) {
+Tree.prototype.findInSubtree = function rec(node, value) {
 	if (!node) {
 		return null;
 	}
 
-	var ineq = this.compare(key, node.key);
+	var ineq = this.compare(value, node.value);
 
 	if (ineq < 0) {
-		return rec(node.lChild, key);
+		return rec(node.lChild, value);
 	}
 
 	if (ineq > 0) {
-		return rec(node.rChild, key);
+		return rec(node.rChild, value);
 	}
 
 	return node;
 };
 
 /**
- * Removes the Node corresponding to the given key from this Tree
+ * Removes the Node corresponding to the given value from this Tree
  *
- * @param {*} key The key corresponding to the Node to remove
+ * @param {*} value The value corresponding to the Node to remove
  * @return Whether the operation was successful
  */
-Tree.prototype.remove = function(key) {
-	var node = this.find(key);
+Tree.prototype.remove = function(value) {
+	var node = this.find(value);
 
 	if (node) {
 		this.removeNode(node);
@@ -404,7 +404,7 @@ Tree.prototype.getRange = function(lower, upper) {
 	var range = [], curr = this.root, node, comp;
 
 	while (curr) {
-		comp = this.compare(curr.key, lower);
+		comp = this.compare(curr.value, lower);
 
 		if (comp < 0) {
 			curr = curr.rChild;
@@ -415,12 +415,12 @@ Tree.prototype.getRange = function(lower, upper) {
 		}
 	}
 
-	while (curr && (this.compare(curr.key, upper) <= 0)) {
-		range.push(curr.key);
+	while (curr && (this.compare(curr.value, upper) <= 0)) {
+		range.push(curr.value);
 
 		node = curr;
 		while ((node = node.eq)) {
-			range.push(node.key);
+			range.push(node.value);
 		}
 
 		curr = curr.gt;
@@ -440,11 +440,11 @@ Tree.prototype.dlldump = function() {
 	var curr = this.smallest(), dump = [], node;
 
 	while (curr) {
-		dump.push(curr.key);
+		dump.push(curr.value);
 
 		node = curr;
 		while ((node = node.eq)) {
-			dump.push(node.key);
+			dump.push(node.value);
 		}
 
 		curr = curr.gt;
@@ -464,7 +464,7 @@ Tree.prototype.dequeue = function() {
 
 	if (node) {
 		this.removeNode(node);
-		return node.key;
+		return node.value;
 	}
 
 	return null;

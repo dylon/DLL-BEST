@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
+VERSION = '0.0.1'
+APPNAME = 'dllbest'
+
+top = '.'
+out = 'build'
+
+def options(opt):
+	pass
+
+def configure(cfg):
+	pass
+
+def build(bld):
+	#closure_source   = '--js ' + ' --js '.join([str(node.abspath()) for node in bld.path.find_dir('src').ant_glob('**/*.js')])
+	#closure_target   = bld.path.get_bld().find_or_declare('dllbest.min.js')
+	#closure_compiler = bld.path.find_dir('lib').find_resource('compiler.jar').abspath()
+	#closure_args     = '--compilation_level SIMPLE_OPTIMIZATIONS'
+
+	#bld(rule = 'java -jar %s %s %s --js_output_file ${TGT}' % (
+		#closure_compiler, closure_args, closure_source
+	#), target = closure_target)
+
+	bld.recurse('src')
+

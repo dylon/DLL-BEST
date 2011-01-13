@@ -120,6 +120,14 @@ namespace DllBest {
 
 
 		protected void Init<I>() where I : ITree<T,N,I> {
+			/*
+			 * IDEA: I may be able to store a reference to an ITree<T,N,I> variable
+			 * to which I may assign one of either ((IRedundant<T,N>) this) or
+			 * ((IUnique<T,N>) this), rather than using all the following methods.
+			 *
+			 * Then, I could call simply ${ref_name}.Get(...), for instance
+			 */
+
 			m_get       = ((ITree<T,N,I>) this).Get;
 			m_preorder  = ((ITree<T,N,I>) this).PreOrder;
 			m_inorder   = ((ITree<T,N,I>) this).InOrder;

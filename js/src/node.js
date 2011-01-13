@@ -40,11 +40,11 @@
 /**
  * Constructs a new Node to insert into the corresponding Avl Tree.
  *
- * @param {*} key The key to associate with this Node
+ * @param {*} value The key to associate with this Node
  * @constructor
  */
-function Node(key) {
-	this.key = key;
+function Node(value) {
+	this.value = value;
 }
 
 Node.inherits(DllBest.Base);
@@ -74,9 +74,9 @@ Node.prototype.eq = null;
  * Assigns the values of the given Node to this one
  *
  * @param {Node} node The node whose properties to assume
- * @param {boolean} key Whether to accept node's key as well
+ * @param {boolean} value Whether to accept node's value as well
  */
-Node.prototype.assign = function(node, key) {
+Node.prototype.assign = function(node, value) {
 	this.parent = node.parent;
 	this.lChild = node.lChild;
 	this.rChild = node.rChild;
@@ -89,8 +89,8 @@ Node.prototype.assign = function(node, key) {
 		this.rChild.parent = this;
 	}
 
-	if (key) {
-		this.key = node.key;
+	if (value) {
+		this.value = node.value;
 
 		// QUES: Is this correct?  Check.
 		this.eq = node.eq;
@@ -122,7 +122,7 @@ Node.prototype.assign = function(node, key) {
  * @return {string} A string representation of this Node
  */
 Node.prototype.toString = function() {
-	return '(' + this.key + ')';
+	return '(' + this.value + ')';
 };
 
 ////////////////////////////////////////////////////////////////////////////////

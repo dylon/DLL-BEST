@@ -56,11 +56,11 @@ NS = DllBest.Avl || (DllBest.Avl = {});
 /**
  * Constructs a new Node to insert into the corresponding Avl Tree.
  *
- * @param {*} key The key to associate with this Node
+ * @param {*} value The value to associate with this Node
  * @constructor
  */
-function Node(key) {
-	this.__super__(key);
+function Node(value) {
+	this.__super__(value);
 }
 
 Node.inherits(DllBest.Node);
@@ -150,10 +150,10 @@ Node.prototype.height = 0;
  * Assigns the values of the given Node to this one
  *
  * @param {Node} node The node whose properties to assume
- * @param {boolean} key Whether to accept node's key as well
+ * @param {boolean} value Whether to accept node's value as well
  */
-Node.prototype.assign = function(node, key) {
-	this.__proto__.assign(node, key);
+Node.prototype.assign = function(node, value) {
+	this.__proto__.assign(node, value);
 	this.height = node.height;
 };
 
@@ -163,7 +163,7 @@ Node.prototype.assign = function(node, key) {
  * @return {string} A string representation of this Node
  */
 Node.prototype.toString = function() {
-	return this.key + '(' + this.height + ')';
+	return this.value + '(' + this.height + ')';
 };
 
 

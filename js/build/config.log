@@ -1,0 +1,10 @@
+# project dllbest (0.0.1) configured on Thu Jan 13 01:39:24 2011 by
+# waf 1.6.2 (abi 98, python 20701f0 on linux2)
+# using /usr/bin/waf configure build -v
+#
+----------------------------------------
+Setting top to
+/home/vandamme/Workspace/DLL-BEST/js
+----------------------------------------
+Setting out to
+/home/vandamme/Workspace/DLL-BEST/js/build
