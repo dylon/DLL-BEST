@@ -30,36 +30,30 @@
 /**
  * Extends a child function with a parent one
  *
- * @param {function} Child The child function to extend
- * @param {function} Parent The base function
+ * @param {function()} Super The super constructor
  */
 Function.prototype.inherits = function(Super) {
 	var proto = new Super();
-	proto.__proto__ = proto;
-	proto.__super__ = Super;
 
+	if (proto.__proto__ === undefined) {
+		proto.__proto__ = proto;
+	}
+
+	proto.__super__ = Super;
 	this.prototype = proto;
 	this.prototype.constructor = this;
+	return this;
 };
-
-/**
- * Base constructor of all DllBest-related types
- */
-function Base() {
-	/// Empty Constructor ///
-}
-
-Base.inherits(Function);
 
 /**
  * Extends this constructor with an arbitrary number of prototypical objects.
  * This is not intended to mimic multiple inheritance, but to make
  * modularization of type definitions easy.
  */
-Base.prototype.extend = function(/* arguments */) {
+Function.prototype.extend = function(/* arguments */) {
 	var p, a, o, k, i, j;
 	
-	p = this.__proto__;
+	p = this.prototype;
 	a = arguments;
 	j = a.length;
 
@@ -74,7 +68,63 @@ Base.prototype.extend = function(/* arguments */) {
 			}
 		}
 	}
+
+	return this;
 };
+
+/*Function.prototype.namespace = function(ns) {
+	ns = ns.split('.');
+	
+	var i = 0, n = ns[i], p = window;
+
+	do {
+		if (!n in p) {
+			p[n] = {};
+		}
+
+		p = p[n];
+	} while ((n = ns[++ i]));
+
+	this.__ns__ = p;
+};*/
+
+/*
+ * IDEA: With something like this, I could do away with the above prototypical
+ * functions:
+ *
+ * window.namespace('DllBest.Avl',
+ *     Tree: {
+ *         inherits: 'DllBest.Tree',
+ *
+ *         modifier: public|protected|private,
+ *
+ *         generics: {
+ *             T : 'DllBest.Tree',
+ *             N : 'DllBest.Node'
+ *         },
+ *
+ *         class: {
+ *
+ *             /// Notice that the constructor has the same name ///
+ *             Tree: function ( arguments ) {
+ *                 /// Constructor ///
+ *             }
+ *         }
+ *     }
+ * );
+ *
+ * var Node = DllBest.Avl.Tree.prototype.class('Node');
+ * var node = new Node(function(x,y) { return x > y ? 1 : x < y ? -1 : 0; });
+ */
+
+/**
+ * Base constructor of all DllBest-related types
+ */
+function Base() {
+	/// Empty Constructor ///
+}
+
+Base.inherits(Object);
 
 window.DllBest = {
 	Base: Base

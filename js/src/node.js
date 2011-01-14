@@ -30,6 +30,9 @@
 (function(window) {
 
 
+var NS = window.DllBest || (window.DllBest = {});
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
 ///                        DllBest.Node Constructor                          ///
@@ -47,91 +50,77 @@ function Node(value) {
 	this.value = value;
 }
 
-Node.inherits(DllBest.Base);
+NS.Node = Node.inherits(DllBest.Base).extend({
 
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                              Default Fields                              ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
 
-Node.prototype.parent = null;
-Node.prototype.lChild = null;
-Node.prototype.rChild = null;
-Node.prototype.height = 0;
+	////////////////////////////////////////////////////////////////////////////////
+	///                                                                          ///
+	///                              Default Fields                              ///
+	///                                                                          ///
+	////////////////////////////////////////////////////////////////////////////////
 
-Node.prototype.lt = null;
-Node.prototype.gt = null;
-Node.prototype.eq = null;
 
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                             Instance Methods                             ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
+	lChild : null,
+	rChild : null,
+	height : 0,
 
-/**
- * Assigns the values of the given Node to this one
- *
- * @param {Node} node The node whose properties to assume
- * @param {boolean} value Whether to accept node's value as well
- */
-Node.prototype.assign = function(node, value) {
-	this.parent = node.parent;
-	this.lChild = node.lChild;
-	this.rChild = node.rChild;
+	lt : null,
+	gt : null,
+	eq : null,
 
-	if (this.lChild) {
-		this.lChild.parent = this;
+
+	////////////////////////////////////////////////////////////////////////////////
+	///                                                                          ///
+	///                             Instance Methods                             ///
+	///                                                                          ///
+	////////////////////////////////////////////////////////////////////////////////
+
+
+	/**
+	 * Assigns the values of the given Node to this one
+	 *
+	 * @param {Node} node The node whose properties to assume
+	 * @param {boolean} value Whether to accept node's value as well
+	 */
+	assign: function(node, value) {
+		this.lChild = node.lChild;
+		this.rChild = node.rChild;
+		this.height = node.height;
+
+		if (value) {
+			this.value = node.value;
+			this.eq = node.eq;
+		}
+
+		this.lt = node.lt;
+		this.gt = node.gt;
+		
+		if (this.lt) {
+			this.lt.gt = this;
+		}
+
+		if (this.gt) {
+			this.gt.lt = this;
+		}
+	},
+
+
+	////////////////////////////////////////////////////////////////////////////////
+	///                                                                          ///
+	///                             Override Methods                             ///
+	///                                                                          ///
+	////////////////////////////////////////////////////////////////////////////////
+
+
+	/**
+	 * Returns a string representation for this Node, which is suitable for printing.
+	 *
+	 * @return {string} A string representation of this Node
+	 */
+	toString: function() {
+		return '(' + this.value + ')';
 	}
-
-	if (this.rChild) {
-		this.rChild.parent = this;
-	}
-
-	if (value) {
-		this.value = node.value;
-
-		// QUES: Is this correct?  Check.
-		this.eq = node.eq;
-	}
-
-	this.lt = node.lt;
-	this.gt = node.gt;
-	
-	if (this.lt) {
-		this.lt.gt = this;
-	}
-
-	if (this.gt) {
-		this.gt.lt = this;
-	}
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                             Override Methods                             ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
-
-
-/**
- * Returns a string representation for this Node, which is suitable for printing.
- *
- * @return {string} A string representation of this Node
- */
-Node.prototype.toString = function() {
-	return '(' + this.value + ')';
-};
-
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                          Initialize the Plugin                           ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
-
-window.DllBest.Node = Node;
+});
 
 }(window));
 

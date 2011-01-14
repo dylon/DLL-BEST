@@ -63,118 +63,118 @@ function Node(value) {
 	this.__super__(value);
 }
 
-Node.inherits(DllBest.Node);
+NS.Node = Node.inherits(DllBest.Node).extend({
+	
+
+	////////////////////////////////////////////////////////////////////////
+	///                                                                  ///
+	///                          Default Fields                          ///
+	///                                                                  ///
+	////////////////////////////////////////////////////////////////////////
 
 
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                                Properties                                ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
+	parent : null,
 
 
-/**
- * Returns whether this Node is a leaf node (i.e., it has no children).
- *
- * @return {boolean} Whether this Node is a leaf node
- */
-Node.prototype.isLeaf = function() {
-	return (this.height === 0);
-};
-
-/**
- * Returns whether this Node is a branch (i.e. it has exactly one child).
- *
- * @return {boolean} Whether this Node is a branch node
- */
-Node.prototype.isBranch = function() {
-	var lc = !!this.lChild, rc = !!this.rChild;
-	return ((lc && !rc) || (!lc && rc));
-};
-
-/**
- * Returns the maximum height between this Node's two children, or -1 if this
- * Node is a leaf node.
- *
- * @return {number} Either the max height of this Node's children or -1
- */
-Node.prototype.maxChildHeight = function() {
-	var lHeight = (this.lChild) ? this.lChild.height : -1,
-	    rHeight = (this.rChild) ? this.rChild.height : -1;
-
-	return (lHeight > rHeight) ? lHeight : rHeight;
-};
-
-/**
- * Returns the balance of this Node, which is calculated as the difference
- * between the heights of its left and right children.
- *
- * @return {number} The balance of this Node
- */
-Node.prototype.balance = function() {
-	var lHeight = (this.lChild) ? this.lChild.height : -1,
-		rHeight = (this.rChild) ? this.rChild.height : -1;
-
-	return (lHeight - rHeight);
-};
-
-/**
- * Returns whether this Node is balanced
- *
- * @return {boolean} Whether node is balanced
- */
-Node.prototype.isBalanced = function() {
-	var balance = this.balance();
-	return ((balance >= -1) && (balance <= 1));
-};
+	////////////////////////////////////////////////////////////////////////////////
+	///                                                                          ///
+	///                                Properties                                ///
+	///                                                                          ///
+	////////////////////////////////////////////////////////////////////////////////
 
 
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                        Initialize Default Fields                         ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Returns whether this Node is a leaf node (i.e., it has no children).
+	 *
+	 * @return {boolean} Whether this Node is a leaf node
+	 */
+	isLeaf: function() {
+		return (this.height === 0);
+	},
+
+	/**
+	 * Returns whether this Node is a branch (i.e. it has exactly one child).
+	 *
+	 * @return {boolean} Whether this Node is a branch node
+	 */
+	isBranch: function() {
+		var lc = !!this.lChild, rc = !!this.rChild;
+		return ((lc && !rc) || (!lc && rc));
+	},
+
+	/**
+	 * Returns the maximum height between this Node's two children, or -1 if this
+	 * Node is a leaf node.
+	 *
+	 * @return {number} Either the max height of this Node's children or -1
+	 */
+	maxChildHeight: function() {
+		var lHeight = (this.lChild) ? this.lChild.height : -1,
+			rHeight = (this.rChild) ? this.rChild.height : -1;
+
+		return (lHeight > rHeight) ? lHeight : rHeight;
+	},
+
+	/**
+	 * Returns the balance of this Node, which is calculated as the difference
+	 * between the heights of its left and right children.
+	 *
+	 * @return {number} The balance of this Node
+	 */
+	balance: function() {
+		var lHeight = (this.lChild) ? this.lChild.height : -1,
+			rHeight = (this.rChild) ? this.rChild.height : -1;
+
+		return (lHeight - rHeight);
+	},
+
+	/**
+	 * Returns whether this Node is balanced
+	 *
+	 * @return {boolean} Whether node is balanced
+	 */
+	isBalanced: function() {
+		var balance = this.balance();
+		return ((balance >= -1) && (balance <= 1));
+	},
 
 
-Node.prototype.height = 0;
+	////////////////////////////////////////////////////////////////////////////////
+	///                                                                          ///
+	///                             Instance Methods                             ///
+	///                                                                          ///
+	////////////////////////////////////////////////////////////////////////////////
 
 
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                             Instance Methods                             ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Assigns the values of the given Node to this one
+	 *
+	 * @param {Node} node The node whose properties to assume
+	 * @param {boolean} value Whether to accept node's value as well
+	 */
+	assign: function(node, value) {
+		this.__proto__.assign(node, value);
 
+		this.parent = node.parent;
 
-/**
- * Assigns the values of the given Node to this one
- *
- * @param {Node} node The node whose properties to assume
- * @param {boolean} value Whether to accept node's value as well
- */
-Node.prototype.assign = function(node, value) {
-	this.__proto__.assign(node, value);
-	this.height = node.height;
-};
+		if (this.lChild) {
+			this.lChild.parent = this;
+		}
 
-/**
- * Returns a string representation for this Node, which is suitable for printing.
- *
- * @return {string} A string representation of this Node
- */
-Node.prototype.toString = function() {
-	return this.value + '(' + this.height + ')';
-};
+		if (this.rChild) {
+			this.rChild.parent = this;
+		}
+	},
 
-
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                          Initialize the Plugin                           ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
-
-
-NS.Node = Node;
+	/**
+	 * Returns a string representation for this Node, which is suitable for printing.
+	 *
+	 * @return {string} A string representation of this Node
+	 */
+	toString: function() {
+		return this.value + '(' + this.height + ')';
+	}
+});
 
 }(window));
 

@@ -59,9 +59,9 @@ var NS = window.DllBest || (window.DllBest = {});
  * Constructs a new Tree which functions as a BEST tree (or a Binary Extended
  * Search Tree).
  *
- * @param {function} N The generic DllBest.Node type for this tree
+ * @param {function()} N The generic DllBest.Node type for this tree
  *
- * @param {function} compare The function to use when comparing Node
+ * @param {function(x,y)} compare The function to use when comparing Node
  * instances.  It should be in the generic, UML-like form:
  *
  * + compare ( x : T, y : T ) : int
@@ -73,412 +73,403 @@ function Tree(N, compare) {
 	this.compare = compare;
 }
 
-Tree.inherits(DllBest.Base);
+NS.Tree = Tree.inherits(DllBest.Base).extend({
 
 
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                                Delegates                                 ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	///                                                                          ///
+	///                                Delegates                                 ///
+	///                                                                          ///
+	////////////////////////////////////////////////////////////////////////////////
 
 
-/**
- * Compares two Node instances.  This function should return a value < 0 (zero)
- * if (node1 < node2), a value > 0 (zero) if (node1 > node2), or 0 (zero) if
- * (node1 = node2).
- *
- * @param {*} key1 The first value to compare
- * @param {*} key2 The second value to compare
- * @return The comparison of node1 with node2
- */
-Tree.prototype.compare = null;
+	/**
+	 * Compares two Node instances.  This function should return a value < 0 (zero)
+	 * if (node1 < node2), a value > 0 (zero) if (node1 > node2), or 0 (zero) if
+	 * (node1 = node2).
+	 *
+	 * @param {*} key1 The first value to compare
+	 * @param {*} key2 The second value to compare
+	 * @return The comparison of node1 with node2
+	 */
+	compare: null,
 
 
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                                Properties                                ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	///                                                                          ///
+	///                                Properties                                ///
+	///                                                                          ///
+	////////////////////////////////////////////////////////////////////////////////
 
 
-/**
- * Returns the height (or number of levels, 1-indexed) of this Tree.  Should
- * this method return 0 (zero), this Tree is empty.
- *
- * @return {number} The height of this Tree
- */
-Tree.prototype.height = function() {
-	if (this.root) {
-		return this.root.height;
-	}
+	/**
+	 * Returns the height (or number of levels, 1-indexed) of this Tree.  Should
+	 * this method return 0 (zero), this Tree is empty.
+	 *
+	 * @return {number} The height of this Tree
+	 */
+	height: function() {
+		if (this.root) {
+			return this.root.height;
+		}
 
-	return 0;
-};
+		return 0;
+	},
 
-/**
- * Locates and returns the biggest Node in this tree
- *
- * @return {Node} The biggest Node branching from node
- */
-Tree.prototype.biggest = function() {
-	if (this.root) {
-		return this.findBiggest(this.root);
-	}
+	/**
+	 * Locates and returns the biggest Node in this tree
+	 *
+	 * @return {Node} The biggest Node branching from node
+	 */
+	biggest: function() {
+		if (this.root) {
+			return this.findBiggest(this.root);
+		}
 
-	return null;
-};
+		return null;
+	},
 
-/**
- * Locates and returns the smallest Node in this Tree
- *
- * @return {Node} The largest Node branching from node
- */
-Tree.prototype.smallest = function() {
-	if (this.root) {
-		return this.findSmallest(this.root);
-	}
+	/**
+	 * Locates and returns the smallest Node in this Tree
+	 *
+	 * @return {Node} The largest Node branching from node
+	 */
+	smallest: function() {
+		if (this.root) {
+			return this.findSmallest(this.root);
+		}
 
-	return null;
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                              Generic Types                               ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
+		return null;
+	},
 
 
-Tree.prototype.N = null;
+	////////////////////////////////////////////////////////////////////////////////
+	///                                                                          ///
+	///                              Generic Types                               ///
+	///                                                                          ///
+	////////////////////////////////////////////////////////////////////////////////
 
 
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                             Default Fields                               ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
+	N: null,
 
 
-/** Root Node of this Tree */
-Tree.prototype.root = null;
-
-/** Number of elements in this Tree */
-Tree.prototype.elements = 0;
-
-
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                             Instance Methods                             ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	///                                                                          ///
+	///                             Default Fields                               ///
+	///                                                                          ///
+	////////////////////////////////////////////////////////////////////////////////
 
 
-/**
- * Creates and inserts a new Node using the provided value as its value.
- *
- * @param {*} value The value to assign the new Node
- */
-Tree.prototype.tryInsert = function(value) {
-	if (!this.root) {
-		this.root = new this.N(value);
-		return true;
-	}
+	/** Root Node of this Tree */
+	root: null,
 
-	if (!this.find(value)) {
-		this.addAsChild(this.root, new this.N(value));
-		this.elements += 1;
-		return true;
-	}
+	/** Number of elements in this Tree */
+	elements: 0,
 
-	return false;
-};
 
-/**
- * Creates and appends a new Node using the provided value as its value. The
- * difference between this.append and this.tryInsert is that this.tryInsert
- * only adds a new node if there is not one with an equivalent value already
- * in this Tree.
- *
- * @param {*} value The value to assign the new Node
- */
-Tree.prototype.append = function(value) {
-	var node = new this.N(value);
+	////////////////////////////////////////////////////////////////////////////////
+	///                                                                          ///
+	///                             Instance Methods                             ///
+	///                                                                          ///
+	////////////////////////////////////////////////////////////////////////////////
 
-	if (this.root) {
-		this.addAsChild(this.root, node);
-		this.elements += 1;
-	} else {
-		this.root = node;
-	}
-};
 
-/**
- * Locates and returns the biggest Node from the given one
- *
- * @param {Node=} node The Node at which to begin the traversal
- * @return {Node} The biggest Node branching from node
- */
-Tree.prototype.findBiggest = function(node) {
-	while (node.rChild) {
-		node = node.rChild;
-	}
+	/**
+	 * Creates and inserts a new Node using the provided value as its value.
+	 *
+	 * @param {*} value The value to assign the new Node
+	 */
+	tryInsert: function(value) {
+		if (!this.root) {
+			this.root = new this.N(value);
+			return true;
+		}
 
-	return node;
-};
+		if (!this.find(value)) {
+			this.addAsChild(this.root, new this.N(value));
+			this.elements += 1;
+			return true;
+		}
 
-/**
- * Locates and returns the smallest Node from the given one
- *
- * @param {Node=} node The Node at which to begin the traversal
- * @return {Node} The largest Node branching from node
- */
-Tree.prototype.findSmallest = function(node) {
-	while (node.lChild) {
-		node = node.lChild;
-	}
+		return false;
+	},
 
-	return node;
-};
+	/**
+	 * Creates and appends a new Node using the provided value as its value. The
+	 * difference between this.append and this.tryInsert is that this.tryInsert
+	 * only adds a new node if there is not one with an equivalent value already
+	 * in this Tree.
+	 *
+	 * @param {*} value The value to assign the new Node
+	 */
+	append: function(value) {
+		var node = new this.N(value);
 
-/**
- * Recursively traverses this Tree in preorder
- *
- * @param {Node} node The node at which to begin the traversal
- * @param {Array.<*>} list The list to which to append the values
- * @return {Array.<*>} The values of this Tree in preorder
- */
-Tree.prototype.preorder = function rec(node, list) {
-	if (!node) { node = this.root; }
-	if (!list) { list = []; }
+		if (this.root) {
+			this.addAsChild(this.root, node);
+			this.elements += 1;
+		} else {
+			this.root = node;
+		}
+	},
 
-	if (!node) {
+	/**
+	 * Locates and returns the biggest Node from the given one
+	 *
+	 * @param {Node=} node The Node at which to begin the traversal
+	 * @return {Node} The biggest Node branching from node
+	 */
+	findBiggest: function(node) {
+		while (node.rChild) {
+			node = node.rChild;
+		}
+
+		return node;
+	},
+
+	/**
+	 * Locates and returns the smallest Node from the given one
+	 *
+	 * @param {Node=} node The Node at which to begin the traversal
+	 * @return {Node} The largest Node branching from node
+	 */
+	findSmallest: function(node) {
+		while (node.lChild) {
+			node = node.lChild;
+		}
+
+		return node;
+	},
+
+	/**
+	 * Recursively traverses this Tree in preorder
+	 *
+	 * @param {Node} node The node at which to begin the traversal
+	 * @param {Array.<*>} list The list to which to append the values
+	 * @return {Array.<*>} The values of this Tree in preorder
+	 */
+	preorder: function rec(node, list) {
+		if (!node) { node = this.root; }
+		if (!list) { list = []; }
+
+		if (!node) {
+			return list;
+		}
+
+		list.push(node.value);
+
+		var next = node;
+		while ((next = next.eq)) {
+			list.push(next.value);
+		}
+
+		if (node.lChild) {
+			rec(node.lChild, list);
+		}
+
+		if (node.rChild) {
+			rec(node.rChild, list);
+		}
+
 		return list;
-	}
+	},
 
-	list.push(node.value);
+	/**
+	 * Recursively traverses this Tree in order
+	 *
+	 * @param {Node} node The node at which to begin the traversal
+	 * @param {Array.<*>} list The list to which to append the values
+	 * @return {Array.<*>} The values of this Tree in order
+	 */
+	inorder: function rec(node, list) {
+		if (!node) { node = this.root; }
+		if (!list) { list = []; }
 
-	var next = node;
-	while ((next = next.eq)) {
-		list.push(next.value);
-	}
+		if (!node) {
+			return list;
+		}
 
-	if (node.lChild) {
-		rec(node.lChild, list);
-	}
+		if (node.lChild) {
+			rec(node.lChild, list);
+		}
 
-	if (node.rChild) {
-		rec(node.rChild, list);
-	}
+		list.push(node.value);
 
-	return list;
-};
+		var next = node;
+		while ((next = next.eq)) {
+			list.push(next.value);
+		}
 
-/**
- * Recursively traverses this Tree in order
- *
- * @param {Node} node The node at which to begin the traversal
- * @param {Array.<*>} list The list to which to append the values
- * @return {Array.<*>} The values of this Tree in order
- */
-Tree.prototype.inorder = function rec(node, list) {
-	if (!node) { node = this.root; }
-	if (!list) { list = []; }
+		if (node.rChild) {
+			rec(node.rChild, list);
+		}
 
-	if (!node) {
 		return list;
-	}
+	},
 
-	if (node.lChild) {
-		rec(node.lChild, list);
-	}
+	/**
+	 * Recursively traverses this Tree in descending order
+	 *
+	 * @param {Node} node The node at which to begin the traversal
+	 * @param {Array.<*>} list The list to which to append the values
+	 * @return {Array.<*>} The values of this Tree in descending order
+	 */
+	postorder: function rec(node, list) {
+		if (!node) { node = this.root; }
+		if (!list) { list = []; }
 
-	list.push(node.value);
+		if (!node) {
+			return list;
+		}
 
-	var next = node;
-	while ((next = next.eq)) {
-		list.push(next.value);
-	}
+		if (node.lChild) {
+			rec(node.lChild, list);
+		}
 
-	if (node.rChild) {
-		rec(node.rChild, list);
-	}
+		if (node.rChild) {
+			rec(node.rChild, list);
+		}
 
-	return list;
-};
+		list.push(node.value);
 
-/**
- * Recursively traverses this Tree in descending order
- *
- * @param {Node} node The node at which to begin the traversal
- * @param {Array.<*>} list The list to which to append the values
- * @return {Array.<*>} The values of this Tree in descending order
- */
-Tree.prototype.postorder = function rec(node, list) {
-	if (!node) { node = this.root; }
-	if (!list) { list = []; }
+		var next = node;
+		while ((next = next.eq)) {
+			list.push(next.value);
+		}
 
-	if (!node) {
 		return list;
-	}
+	},
 
-	if (node.lChild) {
-		rec(node.lChild, list);
-	}
+	/**
+	 * Locates the Node in this Tree which corresponds to the specified value.
+	 *
+	 * @param {*} value The value with which to retrieve the corresponding Node.
+	 * @return {Node} The Node with the given value
+	 */
+	find: function(value) {
+		return this.findInSubtree(this.root, value);
+	},
 
-	if (node.rChild) {
-		rec(node.rChild, list);
-	}
+	/**
+	 * Recursively locates the Node in this Tree with the requested value.
+	 *
+	 * @param {Node} node The Node at which to begin the search
+	 * @param {*} value The desired value of the sought after Node
+	 * @return {Node|null} Either the first matching Node or null
+	 */
+	findInSubtree: function rec(node, value) {
+		if (!node) {
+			return null;
+		}
 
-	list.push(node.value);
+		var ineq = this.compare(value, node.value);
 
-	var next = node;
-	while ((next = next.eq)) {
-		list.push(next.value);
-	}
+		if (ineq < 0) {
+			return rec(node.lChild, value);
+		}
 
-	return list;
-};
+		if (ineq > 0) {
+			return rec(node.rChild, value);
+		}
 
-/**
- * Locates the Node in this Tree which corresponds to the specified value.
- *
- * @param {*} value The value with which to retrieve the corresponding Node.
- * @return {Node} The Node with the given value
- */
-Tree.prototype.find = function(value) {
-	return this.findInSubtree(this.root, value);
-};
+		return node;
+	},
 
-/**
- * Recursively locates the Node in this Tree with the requested value.
- *
- * @param {Node} node The Node at which to begin the search
- * @param {*} value The desired value of the sought after Node
- * @return {Node|null} Either the first matching Node or null
- */
-Tree.prototype.findInSubtree = function rec(node, value) {
-	if (!node) {
+	/**
+	 * Removes the Node corresponding to the given value from this Tree
+	 *
+	 * @param {*} value The value corresponding to the Node to remove
+	 * @return Whether the operation was successful
+	 */
+	remove: function(value) {
+		var node = this.find(value);
+
+		if (node) {
+			this.removeNode(node);
+			return true;
+		}
+
+		return false;
+	},
+
+	/**
+	 * Returns the range of nodes from this Tree which have values between the
+	 * given lower and upper bounds.
+	 *
+	 * @param {*} lower The lower bound of the range
+	 * @param {*} upper The upper bound of the range
+	 * @return {Array.<*>} The range of elements which are bounded by the above conditions
+	 */
+	getRange: function(lower, upper) {
+		var range = [], curr = this.root, node, comp;
+
+		while (curr) {
+			comp = this.compare(curr.value, lower);
+
+			if (comp < 0) {
+				curr = curr.rChild;
+			} else if ((comp > 0) && curr.lChild) {
+				curr = curr.lChild;
+			} else {
+				break;
+			}
+		}
+
+		while (curr && (this.compare(curr.value, upper) <= 0)) {
+			range.push(curr.value);
+
+			node = curr;
+			while ((node = node.eq)) {
+				range.push(node.value);
+			}
+
+			curr = curr.gt;
+		}
+
+		return range;
+	},
+
+	/**
+	 * Returns an inorder traversal of this Tree according to the doubly-linked list,
+	 * rather than the binary search tree.  This is a faster method than the traditional
+	 * BST inorder traversal, and is useful for debugging.
+	 *
+	 * @return {Array.<*>} A list of elements in this Tree in ascending order
+	 */
+	dlldump: function() {
+		var curr = this.smallest(), dump = [], node;
+
+		while (curr) {
+			dump.push(curr.value);
+
+			node = curr;
+			while ((node = node.eq)) {
+				dump.push(node.value);
+			}
+
+			curr = curr.gt;
+		}
+
+		return dump;
+	},
+
+	/**
+	 * Allows this Tree to function as a priority queue by removing and returning
+	 * the value of the greatest node.
+	 *
+	 * @return {*} The value of the greatest node in this Tree
+	 */
+	dequeue: function() {
+		var node = this.biggest();
+
+		if (node) {
+			this.removeNode(node);
+			return node.value;
+		}
+
 		return null;
 	}
-
-	var ineq = this.compare(value, node.value);
-
-	if (ineq < 0) {
-		return rec(node.lChild, value);
-	}
-
-	if (ineq > 0) {
-		return rec(node.rChild, value);
-	}
-
-	return node;
-};
-
-/**
- * Removes the Node corresponding to the given value from this Tree
- *
- * @param {*} value The value corresponding to the Node to remove
- * @return Whether the operation was successful
- */
-Tree.prototype.remove = function(value) {
-	var node = this.find(value);
-
-	if (node) {
-		this.removeNode(node);
-		return true;
-	}
-
-	return false;
-};
-
-/**
- * Returns the range of nodes from this Tree which have values between the
- * given lower and upper bounds.
- *
- * @param {*} lower The lower bound of the range
- * @param {*} upper The upper bound of the range
- * @return {Array.<*>} The range of elements which are bounded by the above conditions
- */
-Tree.prototype.getRange = function(lower, upper) {
-	var range = [], curr = this.root, node, comp;
-
-	while (curr) {
-		comp = this.compare(curr.value, lower);
-
-		if (comp < 0) {
-			curr = curr.rChild;
-		} else if ((comp > 0) && curr.lChild) {
-			curr = curr.lChild;
-		} else {
-			break;
-		}
-	}
-
-	while (curr && (this.compare(curr.value, upper) <= 0)) {
-		range.push(curr.value);
-
-		node = curr;
-		while ((node = node.eq)) {
-			range.push(node.value);
-		}
-
-		curr = curr.gt;
-	}
-
-	return range;
-};
-
-/**
- * Returns an inorder traversal of this Tree according to the doubly-linked list,
- * rather than the binary search tree.  This is a faster method than the traditional
- * BST inorder traversal, and is useful for debugging.
- *
- * @return {Array.<*>} A list of elements in this Tree in ascending order
- */
-Tree.prototype.dlldump = function() {
-	var curr = this.smallest(), dump = [], node;
-
-	while (curr) {
-		dump.push(curr.value);
-
-		node = curr;
-		while ((node = node.eq)) {
-			dump.push(node.value);
-		}
-
-		curr = curr.gt;
-	}
-
-	return dump;
-};
-
-/**
- * Allows this Tree to function as a priority queue by removing and returning
- * the value of the greatest node.
- *
- * @return {*} The value of the greatest node in this Tree
- */
-Tree.prototype.dequeue = function() {
-	var node = this.biggest();
-
-	if (node) {
-		this.removeNode(node);
-		return node.value;
-	}
-
-	return null;
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                          Initialize the Plugin                           ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
-
-
-NS.Tree = Tree;
+});
 
 }(window));
 

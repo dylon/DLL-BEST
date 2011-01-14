@@ -10,10 +10,7 @@ def configure(cfg):
 def build(bld):
 	src = bld.path
 	bld.env.CLOSURE_SOURCE += [
-		src.find_node('dllbest.js'),
 		src.find_node('node.js'),
 		src.find_node('tree.js')
 	]
-
-	bld.recurse('avl')
 
