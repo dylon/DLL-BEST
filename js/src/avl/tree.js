@@ -1,10 +1,10 @@
 /*!
- * Copyright (C) 2010 Dylon Edwards
+ * Copyright ( C ) 2010 Dylon Edwards
  *
  * This code is available under MIT License.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files ( the "Software" ), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -32,19 +32,19 @@
  * @link https://github.com/pgrafov/python-avl-tree
  *
  * It has been modified to be what I've come to call a Doubly-Linked List
- * Binary Extended Search Tree (DLL BEST), which is essentially a binary search
+ * Binary Extended Search Tree ( DLL BEST ), which is essentially a binary search
  * tree that has been merged with a doubly-linked list structure; the purpose
- * is to enable the creation of a sorted doubly-linked list in O(log(N)) time
+ * is to enable the creation of a sorted doubly-linked list in O( log( N )) time
  * with the assistance of the BST insert method and to provide range querying
- * such that the base of the range can be found in O(log(N)) time (via the BST
- * find method) and the bounded elements can be collected in constant O(N) time
+ * such that the base of the range can be found in O( log( N )) time ( via the BST
+ * find method ) and the bounded elements can be collected in constant O( N ) time
  * by simply traversing the doubly-linked list until the supremum of the set
  * has been located.
  *
  * @depends "../tree.js"
  * @depends "node.js"
  */
-(function(window) {
+(function ( window ) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@
 
 var DllBest = window.DllBest,
 
-NS = DllBest.Avl || (DllBest.Avl = {}),
+NS = DllBest.Avl || ( DllBest.Avl = {} ),
 
 Node = NS.Node;
 
@@ -69,17 +69,17 @@ Node = NS.Node;
 
 
 /**
- * Constructs a new Tree which functions as a BEST tree (or a Binary Extended
- * Search Tree).
+ * Constructs a new Tree which functions as a BEST tree ( or a Binary Extended
+ * Search Tree ).
  *
- * @param {function(x,y)} comparator The function to use when comparing Node instances
+ * @param {function ( x,y )} comparator The function to use when comparing Node instances
  * @constructor
  */
-function Tree(comparator) {
-	this.__super__(Node, comparator);
+function Tree( comparator ) {
+	this.__super__( Node, comparator );
 }
 
-NS.Tree = Tree.inherits(DllBest.Tree).extend({
+NS.Tree = Tree.inherits( DllBest.Tree ).extend({
 
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -89,24 +89,24 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 	////////////////////////////////////////////////////////////////////////////////
 
 
-	RRC: function(A, B, C, F) {
+	RRC: function ( A, B, C, F ) {
 		B = A.rChild;
 		C = B.rChild;
 
 		A.rChild = B.lChild;
 
-		if (A.rChild) {
+		if ( A.rChild ) {
 			A.rChild.parent = A;
 		}
 
 		B.lChild = A;
 		A.parent = B;
 
-		if (!F) {
+		if ( !F ) {
 			this.root = B;
 			this.root.parent = null;
 		} else {
-			if (F.rChild === A) {
+			if ( F.rChild === A ) {
 				F.rChild = B;
 			} else {
 				F.lChild = B;
@@ -115,23 +115,23 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 			B.parent = F;
 		}
 
-		this.recomputeHeights(A);
-		this.recomputeHeights(B.parent);
+		this.recomputeHeights( A );
+		this.recomputeHeights( B.parent );
 	},
 
-	RLC: function(A, B, C, F) {
+	RLC: function ( A, B, C, F ) {
 		B = A.rChild;
 		C = B.lChild;
 		
 		B.lChild = C.rChild;
 
-		if (B.lChild) {
+		if ( B.lChild ) {
 			B.lChild.parent = B;
 		}
 
 		A.rChild = C.lChild;
 
-		if (A.rChild) {
+		if ( A.rChild ) {
 			A.rChild.parent = A;
 		}
 
@@ -140,11 +140,11 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 		C.lChild = A;
 		A.parent = C;
 
-		if (!F) {
+		if ( !F ) {
 			this.root = C;
 			this.root.parent = null;
 		} else {
-			if (F.rChild === A) {
+			if ( F.rChild === A ) {
 				F.rChild = C;
 			} else {
 				F.lChild = C;
@@ -153,28 +153,28 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 			C.parent = F;
 		}
 
-		this.recomputeHeights(A);
-		this.recomputeHeights(B);
+		this.recomputeHeights( A );
+		this.recomputeHeights( B );
 	},
 
-	LLC: function(A, B, C, F) {
+	LLC: function ( A, B, C, F ) {
 		B = A.lChild;
 		C = B.lChild;
 
 		A.lChild = B.rChild;
 
-		if (A.lChild) {
+		if ( A.lChild ) {
 			A.lChild.parent = A;
 		}
 
 		B.rChild = A;
 		A.parent = B;
 
-		if (!F) {
+		if ( !F ) {
 			this.root = B;
 			this.root.parent = null;
 		} else {
-			if (F.rChild === A) {
+			if ( F.rChild === A ) {
 				F.rChild = B;
 			} else {
 				F.lChild = B;
@@ -183,23 +183,23 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 			B.parent = F;
 		}
 
-		this.recomputeHeights(A);
-		this.recomputeHeights(B.parent);
+		this.recomputeHeights( A );
+		this.recomputeHeights( B.parent );
 	},
 
-	LRC: function(A, B, C, F) {
+	LRC: function ( A, B, C, F ) {
 		B = A.lChild;
 		C = B.rChild;
 
 		A.lChild = C.rChild;
 
-		if (A.lChild) {
+		if ( A.lChild ) {
 			A.lChild.parent = A;
 		}
 
 		B.rChild = C.lChild;
 
-		if (B.rChild) {
+		if ( B.rChild ) {
 			B.rChild.parent = B;
 		}
 
@@ -209,11 +209,11 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 		C.rChild = A;
 		A.parent = C;
 
-		if (!F) {
+		if ( !F ) {
 			this.root = C;
 			this.root.parent = null;
 		} else {
-			if (F.rChild === A) {
+			if ( F.rChild === A ) {
 				F.rChild = C;
 			} else {
 				F.lChild = C;
@@ -222,8 +222,8 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 			C.parent = F;
 		}
 
-		this.recomputeHeights(A);
-		this.recomputeHeights(B);
+		this.recomputeHeights( A );
+		this.recomputeHeights( B );
 	},
 
 	/**
@@ -234,7 +234,7 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 	 *
 	 * @param {Node} candidate The Node to rebalance
 	 */
-	rebalance: function(candidate) {
+	rebalance: function ( candidate ) {
 		/*
 		 * TODO: Refactor this like I did the C-Sharp stuff
 		 */
@@ -243,17 +243,17 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 			balance = A.balance(),
 			F = A.parent;
 
-		if (balance <= -2) {
-			if (candidate.rChild.balance() <= 0) {
-				this.RRC(A, B, C, F);
+		if ( balance <= -2 ) {
+			if ( candidate.rChild.balance() <= 0 ) {
+				this.RRC( A, B, C, F );
 			} else {
-				this.RLC(A, B, C, F);
+				this.RLC( A, B, C, F );
 			}
-		} else if (balance >= 2) {
-			if (candidate.lChild.balance() >= 0) {
-				this.LLC(A, B, C, F);
+		} else if ( balance >= 2 ) {
+			if ( candidate.lChild.balance() >= 0 ) {
+				this.LLC( A, B, C, F );
 			} else {
-				this.LRC(A, B, C, F);
+				this.LRC( A, B, C, F );
 			}
 		}
 	},
@@ -263,16 +263,16 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 	 *
 	 * @param {Node} node The Node at which to begin recomputing heights
 	 */
-	recomputeHeights: function(node) {
+	recomputeHeights: function ( node ) {
 		var changed = true, oldHeight;
 
-		while (node && changed) {
+		while ( node && changed ) {
 			oldHeight = node.height;
 
 			node.height =
-				(node.rChild || node.lChild) ? node.maxChildHeight() + 1 : 0;
+				( node.rChild || node.lChild ) ? node.maxChildHeight() + 1 : 0;
 
-			changed = (node.height !== oldHeight);
+			changed = ( node.height !== oldHeight );
 			node = node.parent;
 		}
 	},
@@ -283,45 +283,46 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 	 * @param {Node} parent The parent node at which to begin the insertion
 	 * @param {Node} child The child node to insert
 	 */
-	addAsChild: function(parent, child) {
+	addAsChild: function ( parent, child ) {
 		var candidate = null, ineq;
 
-		ineq = this.compare(child.value, parent.value);
+		ineq = this.compare( child.key, parent.key );
 
-		if (ineq < 0) {
-			candidate = this.addLeftChild(parent, child);
-		} else if (ineq > 0) {
-			candidate = this.addRightChild(parent, child);
+		if ( ineq < 0 ) {
+			candidate = this.addLeftChild( parent, child );
+		} else if ( ineq > 0 ) {
+			candidate = this.addRightChild( parent, child );
 		} else {
-			this.addEqualChild(parent, child);
+			this.addEqualChild( parent, child );
 		}
 
-		if (candidate) {
-			this.rebalance(candidate);
+		if ( candidate ) {
+			this.rebalance( candidate );
 		}
 	},
 
-	addLeftChild: function(parent, child) {
+	addLeftChild: function ( parent, child ) {
 		child.gt = parent;
 
 		var candidate = null, node;
 
-		if (!parent.lChild) {
+		if ( !parent.lChild ) {
 			parent.lChild = child;
 			child.parent = parent;
 
-			if (parent.lt) {
+			if ( parent.lt ) {
 				parent.lt.gt = child;
 			}
 
 			parent.lt = child;
 
-			if (parent.height === 0) {
+			if ( parent.height === 0 ) {
 				node = parent;
 
-				while (node) {
+				while ( node ) {
 					node.height = node.maxChildHeight() + 1;
-					if (!node.isBalanced()) {
+
+					if ( !node.isBalanced()) {
 						candidate = node;
 						break;
 					}
@@ -330,33 +331,34 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 				}
 			}
 		} else {
-			this.addAsChild(parent.lChild, child);
+			this.addAsChild( parent.lChild, child );
 		}
 
 		return candidate;
 	},
 
-	addRightChild: function(parent, child) {
+	addRightChild: function ( parent, child ) {
 		child.lt = parent;
 
 		var candidate = null, node;
 
-		if (!parent.rChild) {
+		if ( !parent.rChild ) {
 			parent.rChild = child;
 			child.parent = parent;
 
-			if (parent.gt) {
+			if ( parent.gt ) {
 				parent.gt.lt = child;
 			}
 
 			parent.gt = child;
 
-			if (parent.height === 0) {
+			if ( parent.height === 0 ) {
 				node = parent;
 
-				while (node) {
+				while ( node ) {
 					node.height = node.maxChildHeight() + 1;
-					if (!node.isBalanced()) {
+					
+					if ( !node.isBalanced()) {
 						candidate = node;
 						break;
 					}
@@ -365,13 +367,13 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 				}
 			}
 		} else {
-			this.addAsChild(parent.rChild, child);
+			this.addAsChild( parent.rChild, child );
 		}
 
 		return candidate;
 	},
 
-	addEqualChild: function(parent, child) {
+	addEqualChild: function ( parent, child ) {
 		child.eq = parent.eq;
 		parent.eq = child;
 
@@ -385,45 +387,45 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 	 *
 	 * @param {Node} node The Node to remove
 	 */
-	removeNode: function(node) {
+	removeNode: function ( node ) {
 		this.elements -= 1;
 		
 		/*
 		 * Remove the node from the doubly-linked list
 		 */
 
-		if (node.eq) {
-			node.eq.assign(node);
+		if ( node.eq ) {
+			node.eq.assign( node );
 			return; ///<-- NOTE: Return here
 		}
 
-		if (node.lt) {
+		if ( node.lt ) {
 			node.lt.gt = node.gt;
 		}
 
-		if (node.gt) {
+		if ( node.gt ) {
 			node.gt.lt = node.lt;
 		}
 
 		/*
 		 * There are three cases:
 		 *
-		 * 1) The node is a leaf.  Remove it and return.
+		 * 1 ) The node is a leaf.  Remove it and return.
 		 *
-		 * 2) The node is a branch (has only 1 child).  Make the pointer to this
+		 * 2 ) The node is a branch ( has only 1 child ).  Make the pointer to this
 		 * node point to the child of this node.
 		 *
-		 * 3) The node has two children.  Swap items with the successor of the
-		 * node (the smallest item in its right subtree) and delete the successor
+		 * 3 ) The node has two children.  Swap items with the successor of the
+		 * node ( the smallest item in its right subtree ) and delete the successor
 		 * from the right subtree of the node.
 		 */
 
-		if (node.isLeaf()) {
-			this.removeLeaf(node);
-		} else if (node.isBranch()) {
-			this.removeBranch(node);
+		if ( node.isLeaf()) {
+			this.removeLeaf( node );
+		} else if ( node.isBranch()) {
+			this.removeBranch( node );
 		} else {
-			this.swapAndRemove(node);
+			this.swapAndRemove( node );
 		}
 	},
 
@@ -432,29 +434,29 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 	 *
 	 * @param {Node} node The leaf node to remove
 	 */
-	removeLeaf: function(node) {
+	removeLeaf: function ( node ) {
 		var parent = node.parent;
 
-		if (parent) {
-			if (parent.lChild === node) {
+		if ( parent ) {
+			if ( parent.lChild === node ) {
 				parent.lChild = null;
 			} else {
 				parent.rChild = null;
 			}
 
-			this.recomputeHeights(parent);
+			this.recomputeHeights( parent );
 		} else {
 			this.root = null;
+			return; ///<-- NOTE: Return here
 		}
 
 		node = parent;
-		while (node) {
-			if (!node.isBalanced()) {
-				this.rebalance(node);
-			}
 
-			node = node.parent;
-		}
+		do {
+			if ( !node.isBalanced()) {
+				this.rebalance( node );
+			}
+		} while (( node = node.parent ));
 	},
 
 	/**
@@ -462,33 +464,33 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 	 *
 	 * @param {Node} node The node to remove
 	 */
-	removeBranch: function(node) {
+	removeBranch: function ( node ) {
 		var parent = node.parent;
 
-		if (parent) {
-			if (parent.lChild) {
-				parent.lChild = (node.rChild || node.lChild);
-			} else {
-				parent.rChild = (node.rChild || node.lChild);
-			}
-
-			if (node.lChild) {
-				node.lChild.parent = parent;
-			} else {
-				node.rChild.parent = parent;
-			}
-
-			this.recomputeHeights(parent);
+		if ( !parent ) {
+			return; ///<-- NOTE: Return here
 		}
 
+		if ( parent.lChild ) {
+			parent.lChild = ( node.rChild || node.lChild );
+		} else {
+			parent.rChild = ( node.rChild || node.lChild );
+		}
+
+		if ( node.lChild ) {
+			node.lChild.parent = parent;
+		} else {
+			node.rChild.parent = parent;
+		}
+
+		this.recomputeHeights( parent );
 		node = parent;
-		while (node) {
-			if (!node.isBalanced()) {
-				this.rebalance(node);
-			}
 
-			node = node.parent;
-		}
+		do {
+			if ( !node.isBalanced()) {
+				this.rebalance( node );
+			}
+		} while (( node = node.parent ));
 	},
 
 	/**
@@ -496,14 +498,14 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 	 *
 	 * @param {Node} node The Node to remove
 	 */
-	swapAndRemove: function(node) {
-		var successor = this.findSmallest(node.rChild);
-		this.swapNodes(node, successor);
+	swapAndRemove: function ( node ) {
+		var successor = this.findSmallest( node.rChild );
+		this.swapNodes( node, successor );
 
-		if (node.height === 0) {
-			this.removeLeaf(node);
+		if ( node.height === 0 ) {
+			this.removeLeaf( node );
 		} else {
-			this.removeBranch(node);
+			this.removeBranch( node );
 		}
 	},
 
@@ -513,7 +515,7 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 	 * @param {Node} node1 The Node to swap with node2
 	 * @param {Node} node2 The Node to swap with node1
 	 */
-	swapNodes: function(node1, node2) {
+	swapNodes: function ( node1, node2 ) {
 		/*
 		 * TODO: Compare this with the C# version
 		 */
@@ -532,8 +534,8 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 		node1.height = node2.height;
 		node2.height = tmp;
 
-		if (parent1) {
-			if (parent1.lChild === node1) {
+		if ( parent1 ) {
+			if ( parent1.lChild === node1 ) {
 				parent1.lChild = node2;
 			} else {
 				parent1.rChild = node2;
@@ -551,9 +553,9 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 		node1.lChild = lChild2;
 		node1.rChild = rChild2;
 
-		if (rChild2) {
+		if ( rChild2 ) {
 			rChild2.parent = node1;
-		} else if (parent2 !== node1) {
+		} else if ( parent2 !== node1 ) {
 			node2.rChild = rChild1;
 			rChild1.parent = node2;
 
@@ -566,5 +568,5 @@ NS.Tree = Tree.inherits(DllBest.Tree).extend({
 	}
 });
 
-}(window));
+}( window ));
 

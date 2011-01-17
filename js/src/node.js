@@ -3,14 +3,14 @@
 /*global window */
 
 /*!
- * Copyright (C) 2010 Dylon Edwards
+ * Copyright ( C ) 2010 Dylon Edwards
  *
  * @depends "dllbest.js"
  *
  * This code is available under MIT License.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files ( the "Software" ), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -27,10 +27,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-(function(window) {
+(function ( window ) {
 
 
-var NS = window.DllBest || (window.DllBest = {});
+var NS = window.DllBest || ( window.DllBest = {} );
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,14 +43,16 @@ var NS = window.DllBest || (window.DllBest = {});
 /**
  * Constructs a new Node to insert into the corresponding Avl Tree.
  *
+ * @param {*} key The key to associate with value
  * @param {*} value The key to associate with this Node
  * @constructor
  */
-function Node(value) {
+function Node( key, value ) {
+	this.key = key;
 	this.value = value;
 }
 
-NS.Node = Node.inherits(DllBest.Base).extend({
+NS.Node = Node.inherits( DllBest.Base ).extend({
 
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -80,14 +82,15 @@ NS.Node = Node.inherits(DllBest.Base).extend({
 	 * Assigns the values of the given Node to this one
 	 *
 	 * @param {Node} node The node whose properties to assume
-	 * @param {boolean} value Whether to accept node's value as well
+	 * @param {boolean} key Whether to accept node's value as well
 	 */
-	assign: function(node, value) {
+	assign: function ( node, key ) {
 		this.lChild = node.lChild;
 		this.rChild = node.rChild;
 		this.height = node.height;
 
-		if (value) {
+		if ( key ) {
+			this.key = node.key;
 			this.value = node.value;
 			this.eq = node.eq;
 		}
@@ -95,11 +98,11 @@ NS.Node = Node.inherits(DllBest.Base).extend({
 		this.lt = node.lt;
 		this.gt = node.gt;
 		
-		if (this.lt) {
+		if ( this.lt ) {
 			this.lt.gt = this;
 		}
 
-		if (this.gt) {
+		if ( this.gt ) {
 			this.gt.lt = this;
 		}
 	},
@@ -117,10 +120,10 @@ NS.Node = Node.inherits(DllBest.Base).extend({
 	 *
 	 * @return {string} A string representation of this Node
 	 */
-	toString: function() {
-		return '(' + this.value + ')';
+	toString: function () {
+		return '( ' + this.key + ' )';
 	}
 });
 
-}(window));
+}( window ));
 

@@ -1,10 +1,10 @@
 /*!
- * Copyright (C) 2010 Dylon Edwards
+ * Copyright ( C ) 2010 Dylon Edwards
  *
  * This code is available under MIT License.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files ( the "Software" ), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -29,7 +29,7 @@
 /**
  * @depends "../node.js"
  */
-(function(window) {
+(function ( window ) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@
 var DllBest = window.DllBest,
 
 /** Targeted namespace */
-NS = DllBest.Avl || (DllBest.Avl = {});
+NS = DllBest.Avl || ( DllBest.Avl = {} );
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,14 +56,15 @@ NS = DllBest.Avl || (DllBest.Avl = {});
 /**
  * Constructs a new Node to insert into the corresponding Avl Tree.
  *
+ * @param {*} key The key to associate with value
  * @param {*} value The value to associate with this Node
  * @constructor
  */
-function Node(value) {
-	this.__super__(value);
+function Node( key, value ) {
+	this.__super__( key, value );
 }
 
-NS.Node = Node.inherits(DllBest.Node).extend({
+NS.Node = Node.inherits( DllBest.Node ).extend({
 	
 
 	////////////////////////////////////////////////////////////////////////
@@ -84,22 +85,22 @@ NS.Node = Node.inherits(DllBest.Node).extend({
 
 
 	/**
-	 * Returns whether this Node is a leaf node (i.e., it has no children).
+	 * Returns whether this Node is a leaf node ( i.e., it has no children ).
 	 *
 	 * @return {boolean} Whether this Node is a leaf node
 	 */
-	isLeaf: function() {
-		return (this.height === 0);
+	isLeaf: function () {
+		return ( this.height === 0 );
 	},
 
 	/**
-	 * Returns whether this Node is a branch (i.e. it has exactly one child).
+	 * Returns whether this Node is a branch ( i.e. it has exactly one child ).
 	 *
 	 * @return {boolean} Whether this Node is a branch node
 	 */
-	isBranch: function() {
+	isBranch: function () {
 		var lc = !!this.lChild, rc = !!this.rChild;
-		return ((lc && !rc) || (!lc && rc));
+		return (( lc && !rc ) || ( !lc && rc ));
 	},
 
 	/**
@@ -108,11 +109,11 @@ NS.Node = Node.inherits(DllBest.Node).extend({
 	 *
 	 * @return {number} Either the max height of this Node's children or -1
 	 */
-	maxChildHeight: function() {
-		var lHeight = (this.lChild) ? this.lChild.height : -1,
-			rHeight = (this.rChild) ? this.rChild.height : -1;
+	maxChildHeight: function () {
+		var lHeight = ( this.lChild ) ? this.lChild.height : -1,
+			rHeight = ( this.rChild ) ? this.rChild.height : -1;
 
-		return (lHeight > rHeight) ? lHeight : rHeight;
+		return ( lHeight > rHeight ) ? lHeight : rHeight;
 	},
 
 	/**
@@ -121,11 +122,11 @@ NS.Node = Node.inherits(DllBest.Node).extend({
 	 *
 	 * @return {number} The balance of this Node
 	 */
-	balance: function() {
-		var lHeight = (this.lChild) ? this.lChild.height : -1,
-			rHeight = (this.rChild) ? this.rChild.height : -1;
+	balance: function () {
+		var lHeight = ( this.lChild ) ? this.lChild.height : -1,
+			rHeight = ( this.rChild ) ? this.rChild.height : -1;
 
-		return (lHeight - rHeight);
+		return ( lHeight - rHeight );
 	},
 
 	/**
@@ -133,9 +134,9 @@ NS.Node = Node.inherits(DllBest.Node).extend({
 	 *
 	 * @return {boolean} Whether node is balanced
 	 */
-	isBalanced: function() {
+	isBalanced: function () {
 		var balance = this.balance();
-		return ((balance >= -1) && (balance <= 1));
+		return (( balance >= -1 ) && ( balance <= 1 ));
 	},
 
 
@@ -150,18 +151,18 @@ NS.Node = Node.inherits(DllBest.Node).extend({
 	 * Assigns the values of the given Node to this one
 	 *
 	 * @param {Node} node The node whose properties to assume
-	 * @param {boolean} value Whether to accept node's value as well
+	 * @param {boolean} key Whether to accept node's value as well
 	 */
-	assign: function(node, value) {
-		this.__proto__.assign(node, value);
+	assign: function ( node, key ) {
+		this.__proto__.assign( node, key );
 
 		this.parent = node.parent;
 
-		if (this.lChild) {
+		if ( this.lChild ) {
 			this.lChild.parent = this;
 		}
 
-		if (this.rChild) {
+		if ( this.rChild ) {
 			this.rChild.parent = this;
 		}
 	},
@@ -171,10 +172,10 @@ NS.Node = Node.inherits(DllBest.Node).extend({
 	 *
 	 * @return {string} A string representation of this Node
 	 */
-	toString: function() {
-		return this.value + '(' + this.height + ')';
+	toString: function () {
+		return this.key + ' ( ' + this.height + ' )';
 	}
 });
 
-}(window));
+}( window ));
 
