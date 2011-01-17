@@ -28,9 +28,6 @@
 (function ( window ) {
 
 
-var NS = window.DllBest || ( window.DllBest = {} );
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
 ///                        DllBest.Node Constructor                          ///
@@ -50,7 +47,7 @@ function Node( key, value ) {
 	this.value = value;
 }
 
-NS.Node = Node.inherits( DllBest.Base ).extend({
+Node.inherits( DllBest.Base ).namespace('DllBest').name('Node').extend({
 
 
 	////////////////////////////////////////////////////////////////////////////////

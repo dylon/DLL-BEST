@@ -70,21 +70,28 @@ Function.prototype.extend = function ( /* arguments */ ) {
 	return this;
 };
 
-/*Function.prototype.namespace = function ( ns ) {
+Function.prototype.namespace = function ( ns ) {
 	ns = ns.split( '.' );
 	
-	var i = 0, n = ns[i], p = window;
+	var i = -1, p = window, n;
 
-	do {
-		if ( !n in p ) {
+	while (( n = ns[++ i] )) {
+		if ( !(n in p)) {
 			p[n] = {};
 		}
 
 		p = p[n];
-	} while (( n = ns[++ i] ));
+	}
 
 	this.__ns__ = p;
-};*/
+	return this;
+};
+
+Function.prototype.name = function ( name ) {
+	this.__ns__[name] = this;
+	this.__name__ = name;
+	return this;
+};
 
 /*
  * IDEA: With something like this, I could do away with the above prototypical
@@ -122,11 +129,7 @@ function Base() {
 	/// Empty Constructor ///
 }
 
-Base.inherits( Object );
+Base.inherits( Object ).namespace('DllBest').name('Base');
 
-window.DllBest = {
-	Base: Base
-};
-
-}( window ));
+}( this ));
 

@@ -62,7 +62,7 @@ var NS = window.DllBest || ( window.DllBest = {} );
  * @param {function ( x,y )} compare The function to use when comparing Node
  * instances.  It should be in the generic, UML-like form:
  *
- * + compare (  x : T, y : T  ) : int
+ * + compare ( x : T, y : T ) : int
  * 
  * @constructor
  */
