@@ -129,7 +129,7 @@ function Base() {
 	/// Empty Constructor ///
 }
 
-Base.inherits( Object ).namespace('DllBest').name('Base');
+Base.inherits( Object ).namespace( 'DllBest' ).name( 'Base' );
 
 }( this ));
 

@@ -424,7 +424,7 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend( {
 	 * @return {Array.<*>} The range of elements which are bounded by the above conditions
 	 */
 	getRange: function ( lower, upper ) {
-		var range = [], curr = this.root, node, comp;
+		var range = [], curr = this.root, prev, node, comp;
 
 		while ( curr ) {
 			comp = this.compare( curr.key, lower );
@@ -432,10 +432,15 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend( {
 			if ( comp < 0 ) {
 				curr = curr.rChild;
 			} else if (( comp > 0 ) && curr.lChild ) {
+				prev = curr;
 				curr = curr.lChild;
 			} else {
 				break;
 			}
+		}
+
+		if ( !curr ) {
+			curr = prev;
 		}
 
 		while ( curr && ( this.compare( curr.key, upper ) <= 0 )) {
