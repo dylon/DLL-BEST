@@ -135,6 +135,7 @@ namespace DllBest {
 			CG.List<T> range = new CG.List<T>();
 			
 			N curr = Root;
+			N prev = null;
 
 			while (curr != null) {
 				int comp = Compare(curr.Value, lower);
@@ -143,11 +144,16 @@ namespace DllBest {
 					curr = curr.RChild;
 				}
 				else if ((comp > 0) && (curr.LChild != null)) {
+					prev = curr;
 					curr = curr.LChild;
 				}
 				else {
 					break;
 				}
+			}
+
+			if ( curr == null ) {
+				curr = prev;
 			}
 
 			while ((curr != null) && (Compare(curr.Value, upper) <= 0)) {
