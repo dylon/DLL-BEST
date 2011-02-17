@@ -143,7 +143,7 @@ namespace DllBest {
 				if (comp < 0) {
 					curr = curr.RChild;
 				}
-				else if ((comp > 0) && (curr.LChild != null)) {
+				else if (comp > 0) {
 					prev = curr;
 					curr = curr.LChild;
 				}
@@ -152,7 +152,7 @@ namespace DllBest {
 				}
 			}
 
-			if ( curr == null ) {
+			if (curr == null) {
 				curr = prev;
 			}
 

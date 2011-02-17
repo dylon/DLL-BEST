@@ -57,9 +57,9 @@ var NS = window.DllBest || ( window.DllBest = {} );
  * Constructs a new Tree which functions as a BEST tree ( or a Binary Extended
  * Search Tree ).
  *
- * @param {function ()} N The generic DllBest.Node type for this tree
+ * @param {function()} N The generic DllBest.Node type for this tree
  *
- * @param {function ( x,y )} compare The function to use when comparing Node
+ * @param {function( x, y )} compare The function to use when comparing Node
  * instances.  It should be in the generic, UML-like form:
  *
  * + compare ( x : T, y : T ) : int
@@ -71,7 +71,7 @@ function Tree( N, compare ) {
 	this.compare = compare;
 }
 
-NS.Tree = Tree.inherits( DllBest.Base ).extend( {
+NS.Tree = Tree.inherits( DllBest.Base ).extend({
 
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -431,7 +431,7 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend( {
 
 			if ( comp < 0 ) {
 				curr = curr.rChild;
-			} else if (( comp > 0 ) && curr.lChild ) {
+			} else if ( comp > 0 ) {
 				prev = curr;
 				curr = curr.lChild;
 			} else {
