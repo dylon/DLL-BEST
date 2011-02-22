@@ -1,4 +1,7 @@
-/*global window */
+/*
+ * Created: Tue 22 Feb 2011 06:13:36 PM EST
+ * Last Modified: Tue 22 Feb 2011 06:26:49 PM EST
+ */
 
 /*!
  * Copyright ( C ) 2010 Dylon Edwards
@@ -23,6 +26,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+/*global window */
+
 (function ( window ) {
 
 /**
@@ -56,13 +62,13 @@ Function.prototype.extend = function ( /* arguments */ ) {
 	j = a.length;
 
 	for ( i = 0; i < j; ++ i ) {
-		if ( !( o = a[i] )) {
+		if ( !( o = a[ i ] )) {
 			continue;
 		}
 
 		for ( k in o ) {
 			if ( o.hasOwnProperty( k )) {
-				p[k] = o[k];
+				p[ k ] = o[ k ];
 			}
 		}
 	}
@@ -75,12 +81,12 @@ Function.prototype.namespace = function ( ns ) {
 	
 	var i = -1, p = window, n;
 
-	while (( n = ns[++ i] )) {
-		if ( !(n in p)) {
-			p[n] = {};
+	while (( n = ns[ ++ i ] )) {
+		if ( !( n in p )) {
+			p[ n ] = {};
 		}
 
-		p = p[n];
+		p = p[ n ];
 	}
 
 	this.__ns__ = p;
@@ -88,7 +94,7 @@ Function.prototype.namespace = function ( ns ) {
 };
 
 Function.prototype.name = function ( name ) {
-	this.__ns__[name] = this;
+	this.__ns__[ name ] = this;
 	this.__name__ = name;
 	return this;
 };

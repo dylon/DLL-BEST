@@ -1,5 +1,10 @@
+/*
+ * Created: Tue 22 Feb 2011 06:15:37 PM EST
+ * Last Modified: Tue 22 Feb 2011 06:37:51 PM EST
+ */
+
 /*!
- * Copyright ( C ) 2010 Dylon Edwards
+ * Copyright ( C ) 2010, 2011 Dylon Edwards
  *
  * This code is available under MIT License.
  * 
@@ -213,6 +218,8 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 		} else {
 			this.insert( key, value );
 		}
+
+		return this;
 	},
 
 	/**
@@ -233,6 +240,8 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 		} else {
 			this.root = node;
 		}
+
+		return this;
 	},
 
 	/**
@@ -270,7 +279,7 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 	 * @param {Array.<*>} list The list to which to append the values
 	 * @return {Array.<*>} The values of this Tree in preorder
 	 */
-	preorder: function rec( node, list ) {
+	preorder: function preorder( node, list ) {
 		if ( !node ) { node = this.root; }
 		if ( !list ) { list = []; }
 
@@ -286,11 +295,11 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 		}
 
 		if ( node.lChild ) {
-			rec( node.lChild, list );
+			preorder( node.lChild, list );
 		}
 
 		if ( node.rChild ) {
-			rec( node.rChild, list );
+			preorder( node.rChild, list );
 		}
 
 		return list;
@@ -303,7 +312,7 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 	 * @param {Array.<*>} list The list to which to append the values
 	 * @return {Array.<*>} The values of this Tree in order
 	 */
-	inorder: function rec( node, list ) {
+	inorder: function inorder( node, list ) {
 		if ( !node ) { node = this.root; }
 		if ( !list ) { list = []; }
 
@@ -312,7 +321,7 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 		}
 
 		if ( node.lChild ) {
-			rec( node.lChild, list );
+			inorder( node.lChild, list );
 		}
 
 		list.push( node.value );
@@ -323,7 +332,7 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 		}
 
 		if ( node.rChild ) {
-			rec( node.rChild, list );
+			inorder( node.rChild, list );
 		}
 
 		return list;
@@ -336,7 +345,7 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 	 * @param {Array.<*>} list The list to which to append the values
 	 * @return {Array.<*>} The values of this Tree in descending order
 	 */
-	postorder: function rec( node, list ) {
+	postorder: function postorder( node, list ) {
 		if ( !node ) { node = this.root; }
 		if ( !list ) { list = []; }
 
@@ -345,11 +354,11 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 		}
 
 		if ( node.lChild ) {
-			rec( node.lChild, list );
+			postorder( node.lChild, list );
 		}
 
 		if ( node.rChild ) {
-			rec( node.rChild, list );
+			postorder( node.rChild, list );
 		}
 
 		list.push( node.value );
@@ -380,7 +389,7 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 	 *
 	 * @return {Node|null} Either the first matching Node or null
 	 */
-	findInSubtree: function rec( node, key ) {
+	findInSubtree: function findInSubtree( node, key ) {
 		if ( !node ) {
 			return null;
 		}
@@ -388,11 +397,11 @@ NS.Tree = Tree.inherits( DllBest.Base ).extend({
 		var ineq = this.compare( key, node.key );
 
 		if ( ineq < 0 ) {
-			return rec( node.lChild, key );
+			return findInSubtree( node.lChild, key );
 		}
 
 		if ( ineq > 0 ) {
-			return rec( node.rChild, key );
+			return findInSubtree( node.rChild, key );
 		}
 
 		return node;

@@ -1,4 +1,7 @@
-/*global window */
+/*
+ * Created: Tue 22 Feb 2011 06:15:05 PM EST
+ * Last Modified: Tue 22 Feb 2011 06:30:09 PM EST
+ */
 
 /*!
  * Copyright ( C ) 2010 Dylon Edwards
@@ -25,6 +28,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+/*global window */
+
 (function ( window ) {
 
 
@@ -47,7 +53,7 @@ function Node( key, value ) {
 	this.value = value;
 }
 
-Node.inherits( DllBest.Base ).namespace('DllBest').name('Node').extend({
+Node.inherits( DllBest.Base ).namespace( 'DllBest' ).name( 'Node' ).extend({
 
 
 	////////////////////////////////////////////////////////////////////////////////

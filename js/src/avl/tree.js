@@ -1,3 +1,8 @@
+/*
+ * Created: Tue 22 Feb 2011 06:16:38 PM EST
+ * Last Modified: Tue 22 Feb 2011 06:40:47 PM EST
+ */
+
 /*!
  * Copyright ( C ) 2010 Dylon Edwards
  *
@@ -247,6 +252,7 @@ NS.Tree = Tree.inherits( DllBest.Tree ).extend({
 			} else {
 				this.RLC( A, B, C, F );
 			}
+
 		} else if ( balance >= 2 ) {
 			if ( candidate.lChild.balance() >= 0 ) {
 				this.LLC( A, B, C, F );
