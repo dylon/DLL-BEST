@@ -82,7 +82,7 @@ function Tree( comparator ) {
 	this.__super__( Node, comparator );
 }
 
-NS.Tree = Tree.inherits( DllBest.Tree ).extend({
+NS.Tree = Tree.inherits( DllBest.Tree ).namespace( 'DllBest.Avl' ).cname( 'Tree' ).extend({
 
 
 	////////////////////////////////////////////////////////////////////////////////

@@ -76,7 +76,7 @@ function Tree( N, compare ) {
 	this.compare = compare;
 }
 
-NS.Tree = Tree.inherits( DllBest.Base ).extend({
+NS.Tree = Tree.inherits( DllBest.Base ).namespace( 'DllBest' ).cname( 'Tree' ).extend({
 
 
 	////////////////////////////////////////////////////////////////////////////////

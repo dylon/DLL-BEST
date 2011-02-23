@@ -67,7 +67,7 @@ function Node( key, value ) {
 	this.__super__( key, value );
 }
 
-NS.Node = Node.inherits( DllBest.Node ).extend({
+NS.Node = Node.inherits( DllBest.Node ).namespace( 'DllBest.Avl' ).cname( 'Node' ).extend({
 	
 
 	////////////////////////////////////////////////////////////////////////

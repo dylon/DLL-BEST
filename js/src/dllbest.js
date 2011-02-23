@@ -93,7 +93,7 @@ Function.prototype.namespace = function ( ns ) {
 	return this;
 };
 
-Function.prototype.name = function ( name ) {
+Function.prototype.cname = function ( name ) {
 	this.__ns__[ name ] = this;
 	this.__name__ = name;
 	return this;
@@ -135,7 +135,7 @@ function Base() {
 	/// Empty Constructor ///
 }
 
-Base.inherits( Object ).namespace( 'DllBest' ).name( 'Base' );
+Base.inherits( Object ).namespace( 'DllBest' ).cname( 'Base' );
 
 }( this ));
 

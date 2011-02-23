@@ -53,7 +53,7 @@ function Node( key, value ) {
 	this.value = value;
 }
 
-Node.inherits( DllBest.Base ).namespace( 'DllBest' ).name( 'Node' ).extend({
+Node.inherits( DllBest.Base ).namespace( 'DllBest' ).cname( 'Node' ).extend({
 
 
 	////////////////////////////////////////////////////////////////////////////////
