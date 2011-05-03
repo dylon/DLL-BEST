@@ -1,2 +1,2 @@
-version = 0x1060200
+version = 0x1060300
 tools = []

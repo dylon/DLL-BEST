@@ -1,6 +1,6 @@
 /*
  * Created: Tue 22 Feb 2011 06:16:38 PM EST
- * Last Modified: Tue 22 Feb 2011 06:40:47 PM EST
+ * Last Modified: Sat 09 Apr 2011 12:58:38 PM EDT
  */
 
 /*!
@@ -47,21 +47,7 @@
  * @depends "../tree.js"
  * @depends "node.js"
  */
-(function ( window ) {
-
-
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                        Local Variable Definitions                        ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
-
-
-var DllBest = window.DllBest,
-
-NS = DllBest.Avl || ( DllBest.Avl = {} ),
-
-Node = NS.Node;
+(function ( window, undefined ) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,10 +65,10 @@ Node = NS.Node;
  * @constructor
  */
 function Tree( comparator ) {
-	this.__super__( Node, comparator );
+	this.__super__( DllBest.Avl.Node, comparator );
 }
 
-NS.Tree = Tree.inherits( DllBest.Tree ).namespace( 'DllBest.Avl' ).cname( 'Tree' ).extend({
+Tree.inherits( DllBest.Tree ).fname( 'DllBest.Avl.Tree' ).extend({
 
 
 	////////////////////////////////////////////////////////////////////////////////

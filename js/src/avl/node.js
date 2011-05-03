@@ -1,6 +1,6 @@
 /*
  * Created: Tue 22 Feb 2011 06:16:24 PM EST
- * Last Modified: Tue 22 Feb 2011 06:16:24 PM EST
+ * Last Modified: Wed 23 Feb 2011 09:27:33 PM EST
  */
 
 /*!
@@ -32,21 +32,7 @@
 /**
  * @depends "../node.js"
  */
-(function ( window ) {
-
-
-////////////////////////////////////////////////////////////////////////////////
-///                                                                          ///
-///                        Local Variable Definitions                        ///
-///                                                                          ///
-////////////////////////////////////////////////////////////////////////////////
-
-
-/** Global namespace */
-var DllBest = window.DllBest,
-
-/** Targeted namespace */
-NS = DllBest.Avl || ( DllBest.Avl = {} );
+(function ( window, undefined ) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +53,7 @@ function Node( key, value ) {
 	this.__super__( key, value );
 }
 
-NS.Node = Node.inherits( DllBest.Node ).namespace( 'DllBest.Avl' ).cname( 'Node' ).extend({
+Node.inherits( DllBest.Node ).fname( 'DllBest.Avl.Node' ).extend({
 	
 
 	////////////////////////////////////////////////////////////////////////

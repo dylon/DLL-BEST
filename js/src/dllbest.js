@@ -1,6 +1,6 @@
 /*
  * Created: Tue 22 Feb 2011 06:13:36 PM EST
- * Last Modified: Tue 22 Feb 2011 06:26:49 PM EST
+ * Last Modified: Tue 03 May 2011 04:09:58 PM EDT
  */
 
 /*!
@@ -29,12 +29,14 @@
 
 /*global window */
 
-(function ( window ) {
+(function ( window, undefined ) {
 
 /**
  * Extends a child function with a parent one
  *
  * @param {function ()} Super The super constructor
+ *
+ * @return {object} this
  */
 Function.prototype.inherits = function ( Super ) {
 	var proto = new Super();
@@ -53,6 +55,8 @@ Function.prototype.inherits = function ( Super ) {
  * Extends this constructor with an arbitrary number of prototypical objects.
  * This is not intended to mimic multiple inheritance, but to make
  * modularization of type definitions easy.
+ *
+ * @return {object} this
  */
 Function.prototype.extend = function ( /* arguments */ ) {
 	var p, a, o, k, i, j;
@@ -62,7 +66,9 @@ Function.prototype.extend = function ( /* arguments */ ) {
 	j = a.length;
 
 	for ( i = 0; i < j; ++ i ) {
-		if ( !( o = a[ i ] )) {
+		o = a[ i ];
+
+		if ( !o ) {
 			continue;
 		}
 
@@ -76,12 +82,28 @@ Function.prototype.extend = function ( /* arguments */ ) {
 	return this;
 };
 
+/**
+ * Assigns this constructor a namespace, which is created if it does not yet
+ * exist.
+ *
+ * @param {string} ns
+ * The namespace to assign this constructor
+ *
+ * @return {object} this
+ */
 Function.prototype.namespace = function ( ns ) {
-	ns = ns.split( '.' );
-	
-	var i = -1, p = window, n;
+	var i, j, p, n;
 
-	while (( n = ns[ ++ i ] )) {
+	if ( typeof ns === 'string' ) {
+		ns = ns.split( '.' );
+	}
+	
+	j = ns.length;
+	p = window;
+
+	for ( i = 0; i < j; ++ i ) {
+		n = ns[ i ];
+
 		if ( !( n in p )) {
 			p[ n ] = {};
 		}
@@ -93,9 +115,41 @@ Function.prototype.namespace = function ( ns ) {
 	return this;
 };
 
+/**
+ * Assigns this constructor a global name in its namespace
+ *
+ * @param {string} name
+ * The name of this constructor
+ *
+ * @return {object} this
+ */
 Function.prototype.cname = function ( name ) {
 	this.__ns__[ name ] = this;
 	this.__name__ = name;
+	return this;
+};
+
+/**
+ * Registers this constructor in the global namespace using its fully qualified
+ * name.
+ *
+ * @param {string|array.<string>} name
+ * Should be in the form, "namespace.CName"
+ * 
+ * @return {object} this
+ */
+Function.prototype.fname = function ( name ) {
+	var ln, cn, ns;
+
+	if ( typeof name === 'string' ) {
+		name = name.split( '.' );
+	}
+
+	ln = name.length;
+	cn = name[ ln - 1 ];
+	ns = name.slice( 0, ln - 1 ); // NOTE: This was ( ln - 2 ), HTML 5 stuff?
+
+	this.namespace( ns ).cname( cn );
 	return this;
 };
 
@@ -125,7 +179,7 @@ Function.prototype.cname = function ( name ) {
  *  );
  *
  * var Node = DllBest.Avl.Tree.prototype.class( 'Node' );
- * var node = new Node( function ( x,y ) { return x > y ? 1 : x < y ? -1 : 0; });
+ * var node = new Node( function ( x, y ) { return x > y ? 1 : x < y ? -1 : 0; });
  */
 
 /**
@@ -135,7 +189,7 @@ function Base() {
 	/// Empty Constructor ///
 }
 
-Base.inherits( Object ).namespace( 'DllBest' ).cname( 'Base' );
+Base.inherits( Object ).fname( 'DllBest.Base' );
 
-}( this ));
+}( window ));
 

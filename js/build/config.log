@@ -1,6 +1,6 @@
-# project dllbest (0.0.1) configured on Mon Jan 17 12:08:09 2011 by
-# waf 1.6.2 (abi 98, python 20701f0 on linux2)
-# using /usr/bin/waf clean configure build
+# project dllbest (0.0.1) configured on Tue May  3 16:01:01 2011 by
+# waf 1.6.3 (abi 98, python 30200f0 on linux2)
+# using /usr/bin/waf configure
 #
 ----------------------------------------
 Setting top to

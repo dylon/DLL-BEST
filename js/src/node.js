@@ -1,6 +1,6 @@
 /*
  * Created: Tue 22 Feb 2011 06:15:05 PM EST
- * Last Modified: Tue 22 Feb 2011 06:30:09 PM EST
+ * Last Modified: Wed 23 Feb 2011 09:37:57 PM EST
  */
 
 /*!
@@ -31,7 +31,7 @@
 
 /*global window */
 
-(function ( window ) {
+(function ( window, undefined ) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ function Node( key, value ) {
 	this.value = value;
 }
 
-Node.inherits( DllBest.Base ).namespace( 'DllBest' ).cname( 'Node' ).extend({
+Node.inherits( DllBest.Base ).fname( 'DllBest.Node' ).extend({
 
 
 	////////////////////////////////////////////////////////////////////////////////
